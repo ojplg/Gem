@@ -113,6 +113,10 @@ g6 = start 6
 g7 = start 7
 g8 = start 8
 g9 = start 9
+g10 = start 10
+g11 = start 11
+g12 = start 12
+g154 = start 154
 h1 = start $ -1
 h2 = start $ -2
 h3 = start $ -3
@@ -122,6 +126,9 @@ h6 = start $ -6
 h7 = start $ -7
 h8 = start $ -8
 h9 = start $ -9
+h84 = start $ -84
+h140 = start $ -140
+h430 = start $ -430
 
 
 -- solver helpers
@@ -184,15 +191,17 @@ blank_to_right b n | br == nr && bc >  nc = replicate (bc - nc - 1) Lft
          nr = row b n
          nc = col b n
 
-blank_to_left :: Board -> Int -> [Move]
-blank_to_left b n | br == nr && bc >  nc = Dn : replicate (nc - bc + 1) Lft ++ [Up]
-                  | br == nr && bc <  nc = Dn : replicate (nc - bc + 1) Rt ++ [Up] 
-                  | br >  nr && bc >  nc = replicate (bc - nc - 1) Lft ++ replicate (br - nr) Up
-                  | br >  nr && bc == nc = Rt : replicate (br - nr + 0) Up
-                  | br >  nr && bc <  nc = replicate (nc - bc + 1) Rt ++ replicate (br - nr) Up
-                  | br <  nr && bc == nc = Rt : replicate (nr - br + 0) Dn
-                  | br <  nr && bc <  nc = replicate (nc - bc + 1) Rt ++ replicate (nr - br) Dn
-                  | br <  nr && bc >  nc = replicate (bc - nc - 1) Lft ++ replicate (nr - br - 0) Dn
+blank_to_left :: Board -> Int -> [Move] 
+blank_to_left b n | br == nr && bc >  nc && br == dim - 1 = Up : replicate (bc - nc + 1) Lft ++ [Dn]  -- h430
+                  | br == nr && bc >  nc = Dn : replicate (bc -nc + 1) Lft ++ [Up]  -- h84
+                  | br == nr && bc <  nc && br == dim - 1 = Up : replicate (nc - bc - 1) Rt ++ [Dn]  -- works for g154
+                  | br == nr && bc <  nc = Dn : replicate (nc - bc - 1) Rt ++ [Up]  -- works for h2 
+                  | br >  nr && bc >  nc = replicate (bc - nc + 1) Lft ++ replicate (br - nr) Up
+                  | br >  nr && bc == nc = Lft : replicate (br - nr + 0) Up  -- g12
+                  | br >  nr && bc <  nc = replicate (nc - bc - 1) Rt ++ replicate (br - nr) Up
+                  | br <  nr && bc == nc = Lft : replicate (nr - br + 0) Dn
+                  | br <  nr && bc <  nc = replicate (nc - bc - 1) Rt ++ replicate (nr - br) Dn        -- works for g2
+                  | br <  nr && bc >  nc = replicate (bc - nc + 1) Lft ++ replicate (nr - br - 0) Dn  -- g5
    where br = blank_row b
          bc = blank_col b
          nr = row b n
