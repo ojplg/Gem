@@ -6,6 +6,7 @@ import System.Random
 
 type Board = [Int]
 data Move = Up | Dn | Lft | Rt deriving (Eq,Show)
+type Strategy = Board -> Int -> [Move]
 
 dim :: Int
 dim = 4
@@ -165,18 +166,7 @@ blank_to_top_left = [Up,Up,Up,Lft,Lft,Lft]
 fix :: Board -> Int -> [Move]
 fix b n = []
 
-move_to_last_column :: Board -> Int -> [Move]
-move_to_last_column b n = []
-
-one_to_top :: Board -> [Move]
-one_to_top b = if (position b 1<4) then []
-                  else move_one_up b
-
-move_one_up :: Board -> [Move]
-move_one_up b = []
-
-
-blank_to_right :: Board -> Int -> [Move]
+blank_to_right :: Strategy
 blank_to_right b n | br == nr && bc >  nc = replicate (bc - nc - 1) Lft
                    | br == nr && bc <  nc &&  br == dim - 1 = Up : replicate (nc - bc + 1) Rt ++ [Dn]
                    | br == nr && bc <  nc = Dn : replicate (nc - bc + 1) Rt ++ [Up] 
@@ -191,7 +181,7 @@ blank_to_right b n | br == nr && bc >  nc = replicate (bc - nc - 1) Lft
          nr = row b n
          nc = col b n
 
-blank_to_left :: Board -> Int -> [Move] 
+blank_to_left :: Strategy
 blank_to_left b n | br == nr && bc >  nc && br == dim - 1 = Up : replicate (bc - nc + 1) Lft ++ [Dn]  -- h430
                   | br == nr && bc >  nc = Dn : replicate (bc -nc + 1) Lft ++ [Up]  -- h84
                   | br == nr && bc <  nc && br == dim - 1 = Up : replicate (nc - bc - 1) Rt ++ [Dn]  -- works for g154
@@ -207,8 +197,7 @@ blank_to_left b n | br == nr && bc >  nc && br == dim - 1 = Up : replicate (bc -
          nr = row b n
          nc = col b n
 
-
-n_to_last_column :: Board -> Int -> [Move]
+n_to_last_column :: Strategy
 n_to_last_column b n | position b n `elem` last_column = []
                      | position b n `elem` bottom_row  = ms ++ right_shift b' n Up
                      | otherwise = ms ++ right_shift b' n Dn
@@ -219,7 +208,12 @@ right_shift b n d = Lft : (take (5*count) $ cycle shift)
    where count = dim - (col b n) - 2
          shift = [d,Rt,Rt,opposite d,Lft]
 
-apply_strategy :: Board -> Int -> (Board -> Int -> [Move]) -> Board
+n_to_top_row :: Strategy
+n_to_top_row b n | position b n `elem` top_row = []
+                 | otherwise                   = blank_to_right b n ++ [Up,Lft]
+
+apply_strategy :: Board -> Int -> Strategy -> Board
 apply_strategy b n f = moves b $ f b n
 
-
+compose_strategy :: Strategy -> Strategy -> Strategy
+compose_strategy s t = \b n -> s b n ++ t (apply_strategy b n s) n
