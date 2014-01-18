@@ -203,6 +203,11 @@ slide_over b n = take (5*count) $ cycle slide
   where slide = [Dn,Lft,Lft,Up,Rt]
         count = col b n - (n `mod` dim - 1)
 
+solve_top_row :: Strategy 
+solve_top_row b _ = n_to_place b 1 ++ n_to_place b' 2 ++ n_to_place b'' 3
+  where b'  = apply_strategy b 1 n_to_place
+        b'' = apply_strategy b' 2 n_to_place
+
 up_shift :: Strategy
 up_shift b n = Up : Rt : (take (5*count) $ cycle shift)
   where count = row b n
