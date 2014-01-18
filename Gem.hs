@@ -133,24 +133,6 @@ h430 = start $ -430
 
 
 -- solver helpers
-data Direction = North | NorthWest | West | SouthWest | South | SouthEast | East | NorthEast deriving (Eq,Show)
-
-same_col :: Int -> Int -> Bool
-same_col x y = x `mod` dim == y `mod` dim
-
-same_row :: Int -> Int -> Bool
-same_row x y = x `div` dim == y `div` dim
-
-relative :: Int -> Int -> Direction
-relative x y | same_col x y && x < y = North
-             | same_col x y && x > y = South
-             | same_row x y && x < y = East
-             | same_row x y && x > y = West
-             | x `mod` dim < y `mod` dim && x `div` dim < y `div` dim = NorthEast
-             | x `mod` dim > y `mod` dim && x `div` dim < y `div` dim = NorthWest
-             | x `mod` dim > y `mod` dim && x `div` dim > y `div` dim = SouthWest
-             | otherwise = SouthEast
-
 in_place :: Board -> Int -> Bool
 in_place b n = position b n == n - 1
 
@@ -212,9 +194,10 @@ n_to_top_row :: Strategy
 n_to_top_row b n = n_to_last_column b n ++ up_shift b' n
   where b' = apply_strategy b n n_to_last_column
 
+
 up_shift :: Board -> Int -> [Move]
 up_shift b n = Up : Rt : (take (5*count) $ cycle shift)
-  where count = (row b n)
+  where count = row b n
         shift = [Dn,Lft,Up,Up,Rt]
 
 apply_strategy :: Board -> Int -> Strategy -> Board
