@@ -194,8 +194,16 @@ n_to_top_row :: Strategy
 n_to_top_row b n = n_to_last_column b n ++ up_shift b' n
   where b' = apply_strategy b n n_to_last_column
 
+n_to_place :: Strategy
+n_to_place b n = n_to_top_row b n ++ slide_over b' n
+  where b' = apply_strategy b n n_to_top_row
 
-up_shift :: Board -> Int -> [Move]
+slide_over :: Strategy
+slide_over b n = take (5*count) $ cycle slide
+  where slide = [Dn,Lft,Lft,Up,Rt]
+        count = col b n - (n `mod` dim - 1)
+
+up_shift :: Strategy
 up_shift b n = Up : Rt : (take (5*count) $ cycle shift)
   where count = row b n
         shift = [Dn,Lft,Up,Up,Rt]

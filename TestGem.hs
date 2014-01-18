@@ -20,3 +20,7 @@ test_blank_to_left x = position b 1 `elem` first_column || position b' 1 == blan
 test_n_to_top_row x = position b' 1 `elem` top_row 
    where b  = start x
          b' = apply_strategy b 1 n_to_top_row
+
+test_n_to_place x = in_place b' 1
+  where b = start x
+        b' = apply_strategy b 1 n_to_place
