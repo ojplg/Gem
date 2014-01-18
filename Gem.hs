@@ -25,7 +25,7 @@ format n | n<10       = "  " ++ show n
 
 break_lines :: [String] -> [String]
 break_lines []            = []
-break_lines (a:b:c:d:es)  = a:b:c:d:"\n" : break_lines es
+break_lines ls = ((concat (take dim ls)) ++ "\n") : break_lines (drop dim ls)
 
 out b = putStr $ concat $ (break_lines $ map format b) 
 
@@ -198,7 +198,7 @@ blank_to_left b n | br == nr && bc >  nc && br == dim - 1 = Up : replicate (bc -
          nc = col b n
 
 n_to_last_column :: Strategy
-n_to_last_column b n | position b n `elem` last_column = []
+n_to_last_column b n | position b n `elem` last_column = blank_to_left b n
                      | position b n `elem` bottom_row  = ms ++ right_shift b' n Up
                      | otherwise = ms ++ right_shift b' n Dn
   where b' = moves b ms
@@ -209,8 +209,13 @@ right_shift b n d = Lft : (take (5*count) $ cycle shift)
          shift = [d,Rt,Rt,opposite d,Lft]
 
 n_to_top_row :: Strategy
-n_to_top_row b n | position b n `elem` top_row = []
-                 | otherwise                   = blank_to_right b n ++ [Up,Lft]
+n_to_top_row b n = n_to_last_column b n ++ up_shift b' n
+  where b' = apply_strategy b n n_to_last_column
+
+up_shift :: Board -> Int -> [Move]
+up_shift b n = Up : Rt : (take (5*count) $ cycle shift)
+  where count = (row b n)
+        shift = [Dn,Lft,Up,Up,Rt]
 
 apply_strategy :: Board -> Int -> Strategy -> Board
 apply_strategy b n f = moves b $ f b n
