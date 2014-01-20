@@ -186,17 +186,16 @@ n_to_last_column b n | position b n `elem` last_column = blank_to_left b n
   where b' = moves b ms
         ms = blank_to_right b n 
 
+right_shift :: Board -> Int -> Move -> [Move]
 right_shift b n d = Lft : (take (5*count) $ cycle shift)
    where count = dim - (col b n) - 2
          shift = [d,Rt,Rt,opposite d,Lft]
 
 n_to_top_row :: Strategy
-n_to_top_row b n = n_to_last_column b n ++ up_shift b' n
-  where b' = apply_strategy b n n_to_last_column
+n_to_top_row = compose_strategy n_to_last_column up_shift
 
 n_to_place :: Strategy
-n_to_place b n = n_to_top_row b n ++ slide_over b' n
-  where b' = apply_strategy b n n_to_top_row
+n_to_place = compose_strategy n_to_top_row slide_over
 
 slide_over :: Strategy
 slide_over b n = take (5*count) $ cycle slide
@@ -204,9 +203,9 @@ slide_over b n = take (5*count) $ cycle slide
         count = col b n - (n `mod` dim - 1)
 
 solve_top_row :: Strategy 
-solve_top_row b _ = n_to_place b 1 ++ n_to_place b' 2 ++ n_to_place b'' 3
+solve_top_row b _ = n_to_place b 1 ++ n_to_place b' 2
   where b'  = apply_strategy b 1 n_to_place
-        b'' = apply_strategy b' 2 n_to_place
+--        b'' = apply_strategy b' 2 n_to_place
 
 up_shift :: Strategy
 up_shift b n = Up : Rt : (take (5*count) $ cycle shift)
