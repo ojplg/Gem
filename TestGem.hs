@@ -25,6 +25,6 @@ test_n_to_place x = in_place b' 1
   where b = start x
         b' = apply_strategy b 1 n_to_place
 
-test_solve_top_row x = in_place b' 1 && in_place b' 2 -- && in_place b' 3
+test_solve_top_row x = in_place b' 1 && in_place b' 2 && in_place b' 3
   where b = start x
         b' = apply_strategy b 1 solve_top_row

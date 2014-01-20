@@ -156,8 +156,8 @@ blank_to_right b n | br == nr && bc >  nc = replicate (bc - nc - 1) Lft
                    | br >  nr && bc == nc = Rt : replicate (br - nr + 0) Up
                    | br >  nr && bc <  nc = replicate (nc - bc + 1) Rt ++ replicate (br - nr) Up
                    | br <  nr && bc == nc = Rt : replicate (nr - br + 0) Dn
-                   | br <  nr && bc <  nc = replicate (nc - bc + 1) Rt ++ replicate (nr - br) Dn
-                   | br <  nr && bc >  nc = replicate (bc - nc - 1) Lft ++ replicate (nr - br - 0) Dn
+                   | br <  nr && bc <  nc = replicate (nc - bc + 1) Rt ++ replicate (nr - br) Dn 
+                   | br <  nr && bc >  nc = replicate (nr - br - 0) Dn ++ replicate (bc - nc - 1) Lft 
    where br = blank_row b
          bc = blank_col b
          nr = row b n
@@ -203,9 +203,9 @@ slide_over b n = take (5*count) $ cycle slide
         count = col b n - (n `mod` dim - 1)
 
 solve_top_row :: Strategy 
-solve_top_row b _ = n_to_place b 1 ++ n_to_place b' 2
+solve_top_row b _ = n_to_place b 1 ++ n_to_place b' 2 ++ n_to_place b'' 3
   where b'  = apply_strategy b 1 n_to_place
---        b'' = apply_strategy b' 2 n_to_place
+        b'' = apply_strategy b' 2 n_to_place
 
 up_shift :: Strategy
 up_shift b n = Up : Rt : (take (5*count) $ cycle shift)
