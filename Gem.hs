@@ -9,7 +9,7 @@ data Move = Up | Dn | Lft | Rt deriving (Eq,Show)
 type Strategy = Board -> Int -> [Move]
 
 dim :: Int
-dim = 4
+dim = 3
 
 size :: Int
 size = dim^2
@@ -19,8 +19,8 @@ ig = [1..size]
 
 -- Fuctions for display
 format :: Int -> String
-format n | n<10       = "  " ++ show n
-         | n==size    = "   "
+format n | n==size    = "   "
+         | n<10       = "  " ++ show n
          | otherwise  = " " ++ show n
 
 break_lines :: [String] -> [String]
@@ -60,7 +60,7 @@ move b m | no m b    = b
         move' b Dn  = swap b (blank b) ((blank b)+dim)
         move' b Lft = swap b (blank b) ((blank b)-1)
         move' b Rt  = swap b (blank b) ((blank b)+1)
-        swap board x y = map sub [0..15]
+        swap board x y = map sub [0..size-1]
           where sub n | n == x    = board !! y
                       | n == y    = board !! x
                       | otherwise = board !! n
