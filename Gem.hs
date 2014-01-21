@@ -9,7 +9,7 @@ data Move = Up | Dn | Lft | Rt deriving (Eq,Show)
 type Strategy = Board -> Int -> [Move]
 
 dim :: Int
-dim = 3
+dim = 4
 
 size :: Int
 size = dim^2
@@ -138,15 +138,6 @@ in_place b n = position b n == n - 1
 
 in_row :: Board -> Int -> Bool
 in_row b n = (position b n) `div` dim == (n-1) `div` dim
-
-solve :: Board -> [Move]
-solve b = []
-
-blank_to_top_left :: [Move]
-blank_to_top_left = [Up,Up,Up,Lft,Lft,Lft]
-
-fix :: Board -> Int -> [Move]
-fix b n = []
 
 blank_to_right :: Strategy
 blank_to_right b n | br == nr && bc >  nc = replicate (bc - nc - 1) Lft
