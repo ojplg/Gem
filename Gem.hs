@@ -131,7 +131,6 @@ h84 = start $ -84
 h140 = start $ -140
 h430 = start $ -430
 
-
 -- solver helpers
 in_place :: Board -> Int -> Bool
 in_place b n = position b n == n - 1
@@ -163,12 +162,20 @@ blank_to_left b n | br == nr && bc >  nc && br == dim - 1 = Up : replicate (bc -
                   | br >  nr && bc == nc = Lft : replicate (br - nr + 0) Up  -- g12
                   | br >  nr && bc <  nc = replicate (nc - bc - 1) Rt ++ replicate (br - nr) Up
                   | br <  nr && bc == nc = Lft : replicate (nr - br + 0) Dn
-                  | br <  nr && bc <  nc = replicate (nc - bc - 1) Rt ++ replicate (nr - br) Dn        -- works for g2
+                  | br <  nr && bc <  nc = replicate (nc - bc - 1) Rt ++ replicate (nr - br) Dn -- works for g2
                   | br <  nr && bc >  nc = replicate (bc - nc + 1) Lft ++ replicate (nr - br - 0) Dn  -- g5
    where br = blank_row b
          bc = blank_col b
          nr = row b n
          nc = col b n
+
+blank_to_col :: Strategy
+blank_to_col b i | i >= blank_col b = replicate (i - blank_col b) Rt
+                 | otherwise        = replicate (blank_col b - i) Lft
+
+blank_to_row :: Strategy 
+blank_to_row b i | i >= blank_row b = replicate (i - blank_row b) Dn
+                 | otherwise        = replicate (blank_row b - i) Up
 
 n_to_last_column :: Strategy
 n_to_last_column b n | position b n `elem` last_column = blank_to_left b n
@@ -183,10 +190,10 @@ right_shift b n d = Lft : (take (5*count) $ cycle shift)
          shift = [d,Rt,Rt,opposite d,Lft]
 
 n_to_top_row :: Strategy
-n_to_top_row = compose_strategy n_to_last_column up_shift
+n_to_top_row = n_to_last_column +++ up_shift
 
 n_to_place :: Strategy
-n_to_place = compose_strategy n_to_top_row slide_over
+n_to_place = n_to_top_row +++ slide_over
 
 slide_over :: Strategy
 slide_over b n = take (5*count) $ cycle slide
@@ -198,6 +205,13 @@ solve_top_row b _ = n_to_place b 1 ++ n_to_place b' 2 ++ n_to_place b'' 3
   where b'  = apply_strategy b 1 n_to_place
         b'' = apply_strategy b' 2 n_to_place
 
+finish_top_row :: Strategy
+finish_top_row b _ = solve_top_row b 0 ++ n_to_last_column b' 4 ++ blank_to_col b'' 0 ++ blank_to_row b''' 1
+  where b'     = apply_strategy b     0 solve_top_row
+        b''    = apply_strategy b'    4 n_to_last_column
+        b'''   = apply_strategy b''   0 blank_to_col
+        b''''  = apply_strategy b'''  1 blank_to_row
+
 up_shift :: Strategy
 up_shift b n = Up : Rt : (take (5*count) $ cycle shift)
   where count = row b n
@@ -206,5 +220,5 @@ up_shift b n = Up : Rt : (take (5*count) $ cycle shift)
 apply_strategy :: Board -> Int -> Strategy -> Board
 apply_strategy b n f = moves b $ f b n
 
-compose_strategy :: Strategy -> Strategy -> Strategy
-compose_strategy s t = \b n -> s b n ++ t (apply_strategy b n s) n
+(+++) :: Strategy -> Strategy -> Strategy
+s +++ t = \b n -> s b n ++ t (apply_strategy b n s) n

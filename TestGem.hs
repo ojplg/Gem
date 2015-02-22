@@ -5,6 +5,20 @@ import Test.QuickCheck
 
 prop_adds_right x = (sum $ start x) == 136
 
+test_blank_to_row x = and [blank_row b0 == 0, blank_row b1 == 1, blank_row b2 == 2, blank_row b3 == 3] 
+  where b = start x
+        b0 = apply_strategy b 0 blank_to_row
+        b1 = apply_strategy b 1 blank_to_row
+        b2 = apply_strategy b 2 blank_to_row
+        b3 = apply_strategy b 3 blank_to_row
+
+test_blank_to_col x = and [blank_col b0 == 0, blank_col b1 == 1, blank_col b2 == 2, blank_col b3 == 3] 
+  where b = start x
+        b0 = apply_strategy b 0 blank_to_col
+        b1 = apply_strategy b 1 blank_to_col
+        b2 = apply_strategy b 2 blank_to_col
+        b3 = apply_strategy b 3 blank_to_col
+
 test_blank_to_right x = position b 1 `elem` last_column || position b' 1 + 1 == blank b'
   where b  = start x
         b' = apply_strategy b 1 blank_to_right
