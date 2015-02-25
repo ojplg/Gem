@@ -6,7 +6,10 @@ import System.Random
 
 type Board = [Int]
 data Move = Up | Dn | Lft | Rt deriving (Eq,Show)
-type Strategy = Board -> Int -> [Move]
+--type Strategy = Board -> Int -> [Move]
+type Strategy =  Int -> Action
+type Action = Board -> [Move]
+type Strat = Int -> Action
 
 dim :: Int
 dim = 4
@@ -139,7 +142,7 @@ in_row :: Board -> Int -> Bool
 in_row b n = (position b n) `div` dim == (n-1) `div` dim
 
 blank_to_right :: Strategy
-blank_to_right b n | br == nr && bc >  nc = replicate (bc - nc - 1) Lft
+blank_to_right n b | br == nr && bc >  nc = replicate (bc - nc - 1) Lft
                    | br == nr && bc <  nc &&  br == dim - 1 = Up : replicate (nc - bc + 1) Rt ++ [Dn]
                    | br == nr && bc <  nc = Dn : replicate (nc - bc + 1) Rt ++ [Up] 
                    | br >  nr && bc >  nc = replicate (bc - nc - 1) Lft ++ replicate (br - nr) Up
@@ -154,7 +157,7 @@ blank_to_right b n | br == nr && bc >  nc = replicate (bc - nc - 1) Lft
          nc = col b n
 
 blank_to_left :: Strategy
-blank_to_left b n | br == nr && bc >  nc && br == dim - 1 = Up : replicate (bc - nc + 1) Lft ++ [Dn]  -- h430
+blank_to_left n b | br == nr && bc >  nc && br == dim - 1 = Up : replicate (bc - nc + 1) Lft ++ [Dn]  -- h430
                   | br == nr && bc >  nc = Dn : replicate (bc -nc + 1) Lft ++ [Up]  -- h84
                   | br == nr && bc <  nc && br == dim - 1 = Up : replicate (nc - bc - 1) Rt ++ [Dn]  -- works for g154
                   | br == nr && bc <  nc = Dn : replicate (nc - bc - 1) Rt ++ [Up]  -- works for h2 
@@ -170,19 +173,19 @@ blank_to_left b n | br == nr && bc >  nc && br == dim - 1 = Up : replicate (bc -
          nc = col b n
 
 blank_to_col :: Strategy
-blank_to_col b i | i >= blank_col b = replicate (i - blank_col b) Rt
+blank_to_col i b | i >= blank_col b = replicate (i - blank_col b) Rt
                  | otherwise        = replicate (blank_col b - i) Lft
 
 blank_to_row :: Strategy 
-blank_to_row b i | i >= blank_row b = replicate (i - blank_row b) Dn
+blank_to_row i b | i >= blank_row b = replicate (i - blank_row b) Dn
                  | otherwise        = replicate (blank_row b - i) Up
 
 n_to_last_column :: Strategy
-n_to_last_column b n | position b n `elem` last_column = blank_to_left b n
+n_to_last_column n b | position b n `elem` last_column = blank_to_left n b
                      | position b n `elem` bottom_row  = ms ++ right_shift b' n Up
                      | otherwise = ms ++ right_shift b' n Dn
   where b' = moves b ms
-        ms = blank_to_right b n 
+        ms = blank_to_right n b 
 
 right_shift :: Board -> Int -> Move -> [Move]
 right_shift b n d = Lft : (take (5*count) $ cycle shift)
@@ -190,35 +193,29 @@ right_shift b n d = Lft : (take (5*count) $ cycle shift)
          shift = [d,Rt,Rt,opposite d,Lft]
 
 n_to_top_row :: Strategy
-n_to_top_row = n_to_last_column +++ up_shift
+n_to_top_row n = n_to_last_column n +> up_shift n
 
 n_to_place :: Strategy
-n_to_place = n_to_top_row +++ slide_over
+n_to_place n = n_to_top_row n +> slide_over n
 
 slide_over :: Strategy
-slide_over b n = take (5*count) $ cycle slide
+slide_over n b  = take (5*count) $ cycle slide
   where slide = [Dn,Lft,Lft,Up,Rt]
         count = col b n - (n `mod` dim - 1)
 
-solve_top_row :: Strategy 
-solve_top_row b _ = n_to_place b 1 ++ n_to_place b' 2 ++ n_to_place b'' 3
-  where b'  = apply_strategy b 1 n_to_place
-        b'' = apply_strategy b' 2 n_to_place
+solve_top_row :: Action 
+solve_top_row = n_to_place 1 +> n_to_place 2 +> n_to_place 3
 
-finish_top_row :: Strategy
-finish_top_row b _ = solve_top_row b 0 ++ n_to_last_column b' 4 ++ blank_to_col b'' 0 ++ blank_to_row b''' 1
-  where b'     = apply_strategy b     0 solve_top_row
-        b''    = apply_strategy b'    4 n_to_last_column
-        b'''   = apply_strategy b''   0 blank_to_col
-        b''''  = apply_strategy b'''  1 blank_to_row
+finish_top_row :: Action
+finish_top_row = solve_top_row +> n_to_last_column 4 +> blank_to_col 0 +> blank_to_row 1
 
 up_shift :: Strategy
-up_shift b n = Up : Rt : (take (5*count) $ cycle shift)
+up_shift n b = Up : Rt : (take (5*count) $ cycle shift)
   where count = row b n
         shift = [Dn,Lft,Up,Up,Rt]
 
-apply_strategy :: Board -> Int -> Strategy -> Board
-apply_strategy b n f = moves b $ f b n
+do_action :: Board -> Action -> Board
+do_action b a = moves b (a b)
 
-(+++) :: Strategy -> Strategy -> Strategy
-s +++ t = \b n -> s b n ++ t (apply_strategy b n s) n
+(+>) :: Action -> Action -> Action
+a1 +> a2 = \b -> let ma1 = a1 b in ma1 ++ a2 (moves b ma1)
