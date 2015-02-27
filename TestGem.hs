@@ -31,10 +31,6 @@ test_blank_to_left x = position b 1 `elem` first_column || position b' 1 == blan
   where b  = start x
         b' = do_action b $ blank_to_left 1
 
-test_n_to_top_row x = position b' 1 `elem` top_row 
-   where b  = start x
-         b' = do_action b $ n_to_top_row 1
-
 test_n_to_place x = in_place b' 1
   where b = start x
         b' = do_action b $ n_to_place 1

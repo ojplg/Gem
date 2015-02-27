@@ -6,19 +6,14 @@ import System.Random
 
 type Board = [Int]
 data Move = Up | Dn | Lft | Rt deriving (Eq,Show)
---type Strategy = Board -> Int -> [Move]
 type Strategy =  Int -> Action
 type Action = Board -> [Move]
-type Strat = Int -> Action
 
 dim :: Int
 dim = 4
 
 size :: Int
 size = dim^2
-
-ig :: Board
-ig = [1..size]
 
 -- Fuctions for display
 format :: Int -> String
@@ -27,7 +22,7 @@ format n | n==size    = "   "
          | otherwise  = " " ++ show n
 
 break_lines :: [String] -> [String]
-break_lines []            = []
+break_lines [] = []
 break_lines ls = ((concat (take dim ls)) ++ "\n") : break_lines (drop dim ls)
 
 out b = putStr $ concat $ (break_lines $ map format b) 
@@ -104,7 +99,7 @@ rand_list :: Int -> Int -> [(Int, StdGen)]
 rand_list seed length = build_rand_list length [next $ mkStdGen seed]
 
 start :: Int -> Board
-start seed = moves ig $ rands seed 1000
+start seed = moves [1..size] $ rands seed 1000
 
 -- some games
 g0 = start 0
@@ -138,8 +133,8 @@ h430 = start $ -430
 in_place :: Board -> Int -> Bool
 in_place b n = position b n == n - 1
 
-in_row :: Board -> Int -> Bool
-in_row b n = (position b n) `div` dim == (n-1) `div` dim
+goal_row :: Int -> Int
+goal_row n = (n-1) `div` dim
 
 blank_to_right :: Strategy
 blank_to_right n b | br == nr && bc >  nc = replicate (bc - nc - 1) Lft
@@ -192,11 +187,8 @@ right_shift b n d = Lft : (take (5*count) $ cycle shift)
    where count = dim - (col b n) - 2
          shift = [d,Rt,Rt,opposite d,Lft]
 
-n_to_top_row :: Strategy
-n_to_top_row n = n_to_last_column n +> up_shift n
-
 n_to_place :: Strategy
-n_to_place n = n_to_top_row n +> slide_over n
+n_to_place n = n_to_last_column n +> up_shift n +> slide_over n
 
 slide_over :: Strategy
 slide_over n b  = take (5*count) $ cycle slide
@@ -207,11 +199,15 @@ solve_top_row :: Action
 solve_top_row = n_to_place 1 +> n_to_place 2 +> n_to_place 3
 
 finish_top_row :: Action
-finish_top_row = solve_top_row +> n_to_last_column 4 +> blank_to_col 0 +> blank_to_row 1
+finish_top_row = solve_top_row +> n_to_last_column 4
+--n_to_last_column 4 +> blank_to_col 0 +> blank_to_row 1
+
+fix_last_in_row :: Action
+fix_last_in_row = n_to_last_column 4
 
 up_shift :: Strategy
 up_shift n b = Up : Rt : (take (5*count) $ cycle shift)
-  where count = row b n
+  where count = row b n - goal_row n
         shift = [Dn,Lft,Up,Up,Rt]
 
 do_action :: Board -> Action -> Board
