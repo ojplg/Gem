@@ -33,6 +33,8 @@ bottom_row = [size-dim .. size-1]
 first_column = [n * dim | n <- [0..dim-1]]
 last_column = [n * dim - 1 | n <- [1..dim]]
 
+row_places r = [r*dim+1..(r+1)*dim]
+
 -- Functions for moving
 position :: Board -> Int -> Int
 position b n = fromJust $ findIndex (==n) b
@@ -51,6 +53,7 @@ no Dn  b = blank b `elem` bottom_row
 no Lft b = blank b `elem` first_column
 no Rt  b = blank b `elem` last_column
 
+-- This moves the BLANK in the direction indicated
 move :: Board -> Move -> Board
 move b m | no m b    = b
          | otherwise = move' b m
@@ -188,7 +191,7 @@ right_shift b n d = Lft : (take (5*count) $ cycle shift)
          shift = [d,Rt,Rt,opposite d,Lft]
 
 n_to_place :: Strategy
-n_to_place n = n_to_last_column n +> up_shift n +> slide_over n
+n_to_place n = n_to_last_column n +> up_to_goal_row n +> slide_over n
 
 slide_over :: Strategy
 slide_over n b  = take (5*count) $ cycle slide
@@ -196,22 +199,43 @@ slide_over n b  = take (5*count) $ cycle slide
         count = col b n - (n `mod` dim - 1)
 
 solve_top_row :: Action 
-solve_top_row = n_to_place 1 +> n_to_place 2 +> n_to_place 3
+solve_top_row = solve_row 0
+
+solve_row :: Int -> Action
+solve_row r = foldr (+>) empty_action (map (\n-> n_to_place n) (take (dim-1) $ row_places r))
+
+empty_action :: Action
+empty_action = \_ -> []
 
 finish_top_row :: Action
-finish_top_row = solve_top_row +> n_to_last_column 4
---n_to_last_column 4 +> blank_to_col 0 +> blank_to_row 1
+finish_top_row = solve_top_row +> to_action [Dn] +> (fix_last_in_row $ last_in_row 0)
 
-fix_last_in_row :: Action
-fix_last_in_row = n_to_last_column 4
+last_in_row :: Int ->Int
+last_in_row r = dim * (r+1)
 
-up_shift :: Strategy
-up_shift n b = Up : Rt : (take (5*count) $ cycle shift)
-  where count = row b n - goal_row n
-        shift = [Dn,Lft,Up,Up,Rt]
+fix_last_in_row :: Strategy
+fix_last_in_row n b | in_place b n                    = []
+                    | position b n `elem` last_column = up_to_below_goal_row n b
+                    | otherwise                       = (n_to_last_column n +> up_to_below_goal_row n) b
+
+up_to_goal_row :: Strategy
+up_to_goal_row n b = Up : Rt : (take (5*(row b n - goal_row n)) $ cycle shift_up)
+
+up_to_below_goal_row :: Strategy
+up_to_below_goal_row n b = Up : Rt : (take (5*(row b n - goal_row n - 2)) $ cycle shift_up) ++ [Dn,Lft,Up]
+
+shift_up :: [Move]
+shift_up = [Dn,Lft,Up,Up,Rt]
 
 do_action :: Board -> Action -> Board
 do_action b a = moves b (a b)
 
+guard_strategy :: Int -> Board -> Strategy -> Action
+guard_strategy n b s = if in_place b n then (\_ -> [])
+                       else s n
+
 (+>) :: Action -> Action -> Action
 a1 +> a2 = \b -> let ma1 = a1 b in ma1 ++ a2 (moves b ma1)
+
+to_action :: [Move] -> Action
+to_action ms = \_ -> ms
