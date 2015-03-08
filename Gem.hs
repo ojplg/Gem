@@ -136,8 +136,17 @@ h430 = start $ -430
 in_place :: Board -> Int -> Bool
 in_place b n = position b n == n - 1
 
+in_correct_column :: Board -> Int -> Bool
+in_correct_column b n = row b n == goal_row n
+
+in_correct_row :: Board -> Int ->  Bool
+in_correct_row b n = col b n == goal_column n
+
 goal_row :: Int -> Int
 goal_row n = (n-1) `div` dim
+
+goal_column :: Int -> Int 
+goal_column n = (n-1) `mod` dim
 
 blank_to_right :: Strategy
 blank_to_right n b | br == nr && bc >  nc = replicate (bc - nc - 1) Lft
@@ -214,9 +223,12 @@ last_in_row :: Int ->Int
 last_in_row r = dim * (r+1)
 
 fix_last_in_row :: Strategy
-fix_last_in_row n b | in_place b n                    = []
-                    | position b n `elem` last_column = (up_to_below_goal_row n +> final_slide) b
-                    | otherwise                       = (n_to_last_column n +> up_to_below_goal_row n +> final_slide) b
+fix_last_in_row n b | in_place b n          = []
+                    | in_correct_column b n = final_fix_last n b
+                    | otherwise             = (n_to_last_column n +> final_fix_last n +> final_slide) b
+
+final_fix_last :: Strategy
+final_fix_last n b = (up_to_below_goal_row n +> final_slide) b
 
 final_slide :: Action
 final_slide = to_action [Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Lft,Lft,Dn]
