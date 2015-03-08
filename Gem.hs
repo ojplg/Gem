@@ -215,8 +215,11 @@ last_in_row r = dim * (r+1)
 
 fix_last_in_row :: Strategy
 fix_last_in_row n b | in_place b n                    = []
-                    | position b n `elem` last_column = up_to_below_goal_row n b
-                    | otherwise                       = (n_to_last_column n +> up_to_below_goal_row n) b
+                    | position b n `elem` last_column = (up_to_below_goal_row n +> final_slide) b
+                    | otherwise                       = (n_to_last_column n +> up_to_below_goal_row n +> final_slide) b
+
+final_slide :: Action
+final_slide = to_action [Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Lft,Lft,Dn]
 
 up_to_goal_row :: Strategy
 up_to_goal_row n b = Up : Rt : (take (5*(row b n - goal_row n)) $ cycle shift_up)
