@@ -118,6 +118,8 @@ g9 = start 9
 g10 = start 10
 g11 = start 11
 g12 = start 12
+g19 = start 19
+g24 = start 24
 g154 = start 154
 h1 = start $ -1
 h2 = start $ -2
@@ -137,10 +139,13 @@ in_place :: Board -> Int -> Bool
 in_place b n = position b n == n - 1
 
 in_correct_column :: Board -> Int -> Bool
-in_correct_column b n = row b n == goal_row n
+in_correct_column b n = col b n == goal_column n
 
 in_correct_row :: Board -> Int ->  Bool
-in_correct_row b n = col b n == goal_column n
+in_correct_row b n = row b n == goal_row n
+
+one_below_correct_row :: Board -> Int -> Bool
+one_below_correct_row b n = row b n == goal_row n - 1
 
 goal_row :: Int -> Int
 goal_row n = (n-1) `div` dim
@@ -208,7 +213,7 @@ slide_over n b  = take (5*count) $ cycle slide
         count = col b n - (n `mod` dim - 1)
 
 solve_top_row :: Action 
-solve_top_row = solve_row 0
+solve_top_row = solve_row 0 +> to_action [Dn]
 
 solve_row :: Int -> Action
 solve_row r = foldr (+>) empty_action (map (\n-> n_to_place n) (take (dim-1) $ row_places r))
@@ -217,18 +222,35 @@ empty_action :: Action
 empty_action = \_ -> []
 
 finish_top_row :: Action
-finish_top_row = solve_top_row +> to_action [Dn] +> (fix_last_in_row $ last_in_row 0)
+finish_top_row = solve_top_row +> (fix_last_in_row $ last_in_row 0)
 
 last_in_row :: Int ->Int
 last_in_row r = dim * (r+1)
 
 fix_last_in_row :: Strategy
 fix_last_in_row n b | in_place b n          = []
-                    | in_correct_column b n = final_fix_last n b
-                    | otherwise             = (n_to_last_column n +> final_fix_last n +> final_slide) b
+                    | in_correct_column b n = (blank_to_left n +> final_fix_last n) b
+                    | otherwise             = (n_to_last_column n +> final_fix_last n) b
 
 final_fix_last :: Strategy
+--final_fix_last n b | one_below_correct_row b n = final_slide b
+--                   | otherwise                 = (up_to_below_goal_row n +> final_slide) b
 final_fix_last n b = (up_to_below_goal_row n +> final_slide) b
+
+b1 = do_action g1 solve_top_row 
+b1' = do_action g1 finish_top_row 
+
+b2 = do_action g2 solve_top_row 
+b2' = do_action g2 finish_top_row 
+
+b3 = do_action g3 solve_top_row 
+b3' = do_action g3 finish_top_row 
+
+b5 = do_action g5 solve_top_row 
+b5' = do_action g5 finish_top_row 
+
+b19 = do_action g19 solve_top_row 
+b19' = do_action g19 finish_top_row 
 
 final_slide :: Action
 final_slide = to_action [Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Lft,Lft,Dn]
