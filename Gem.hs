@@ -130,6 +130,7 @@ h6 = start $ -6
 h7 = start $ -7
 h8 = start $ -8
 h9 = start $ -9
+h12 = start $ -12
 h84 = start $ -84
 h140 = start $ -140
 h430 = start $ -430
@@ -145,7 +146,7 @@ in_correct_row :: Board -> Int ->  Bool
 in_correct_row b n = row b n == goal_row n
 
 one_below_correct_row :: Board -> Int -> Bool
-one_below_correct_row b n = row b n == goal_row n - 1
+one_below_correct_row b n = row b n == goal_row n + 1
 
 goal_row :: Int -> Int
 goal_row n = (n-1) `div` dim
@@ -224,7 +225,7 @@ empty_action = \_ -> []
 finish_top_row :: Action
 finish_top_row = solve_top_row +> (fix_last_in_row $ last_in_row 0)
 
-last_in_row :: Int ->Int
+last_in_row :: Int -> Int
 last_in_row r = dim * (r+1)
 
 fix_last_in_row :: Strategy
@@ -233,9 +234,9 @@ fix_last_in_row n b | in_place b n          = []
                     | otherwise             = (n_to_last_column n +> final_fix_last n) b
 
 final_fix_last :: Strategy
---final_fix_last n b | one_below_correct_row b n = final_slide b
---                   | otherwise                 = (up_to_below_goal_row n +> final_slide) b
-final_fix_last n b = (up_to_below_goal_row n +> final_slide) b
+final_fix_last n b | one_below_correct_row b n = final_slide b
+                   | otherwise                 = (up_to_below_goal_row n +> final_slide) b
+--final_fix_last n b = (up_to_below_goal_row n +> final_slide) b
 
 b1 = do_action g1 solve_top_row 
 b1' = do_action g1 finish_top_row 
@@ -251,6 +252,9 @@ b5' = do_action g5 finish_top_row
 
 b19 = do_action g19 solve_top_row 
 b19' = do_action g19 finish_top_row 
+
+b12 = do_action h12 solve_top_row 
+b12' = do_action h12 finish_top_row 
 
 final_slide :: Action
 final_slide = to_action [Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Lft,Lft,Dn]
