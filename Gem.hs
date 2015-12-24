@@ -236,7 +236,6 @@ fix_last_in_row n b | in_place b n          = []
 final_fix_last :: Strategy
 final_fix_last n b | one_below_correct_row b n = final_slide b
                    | otherwise                 = (up_to_below_goal_row n +> final_slide) b
---final_fix_last n b = (up_to_below_goal_row n +> final_slide) b
 
 b1 = do_action g1 solve_top_row 
 b1' = do_action g1 finish_top_row 
@@ -260,7 +259,8 @@ final_slide :: Action
 final_slide = to_action [Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Lft,Lft,Dn]
 
 up_to_goal_row :: Strategy
-up_to_goal_row n b = Up : Rt : (take (5*(row b n - goal_row n)) $ cycle shift_up)
+up_to_goal_row n b | in_correct_row b n = [Up,Rt]
+                   | otherwise          = Up : Rt : (take (5*(row b n - goal_row n)) $ cycle shift_up)
 
 up_to_below_goal_row :: Strategy
 up_to_below_goal_row n b = Up : Rt : (take (5*(row b n - goal_row n - 2)) $ cycle shift_up) ++ [Dn,Lft,Up]
