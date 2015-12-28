@@ -23,7 +23,13 @@ test_blank_to_right x = position b 1 `elem` last_column || position b' 1 + 1 == 
   where b  = start x
         b' = do_action b $ blank_to_right 1
 
-test_n_to_last_column x = position b' 1 `elem` last_column && row b 1 == row b' 1
+-- Make sure that after calling n_to_last_column on the 1 tile:
+-- a) the 1 tile is in the last column
+-- b) the 1 tile is in the same row as it started
+-- c) the blank is to the immediate left of the 1 tile
+test_n_to_last_column x = position b' 1 `elem` last_column && 
+                            row b 1 == row b' 1 &&
+                            blank b' == position b' 1 - 1
   where b  = start x
         b' =  do_action b $ n_to_last_column 1
 

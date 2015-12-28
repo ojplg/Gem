@@ -216,7 +216,7 @@ slide_over n b  = take (5*count) $ cycle slide
 solve_top_row :: Action 
 solve_top_row = solve_row 0 +> to_action [Dn]
 
-solve_row :: Int -> Action
+solve_row :: Strategy
 solve_row r = foldr (+>) empty_action (map (\n-> n_to_place n) (take (dim-1) $ row_places r))
 
 empty_action :: Action
@@ -239,6 +239,7 @@ final_fix_last n b | one_below_correct_row b n = final_slide b
 
 b1 = do_action g1 solve_top_row 
 b1' = do_action g1 finish_top_row 
+b1_ = do_action b1' (n_to_last_column 5 +> up_to_goal_row 5)
 
 b2 = do_action g2 solve_top_row 
 b2' = do_action g2 finish_top_row 
