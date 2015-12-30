@@ -148,6 +148,9 @@ in_correct_row b n = row b n == goal_row n
 one_below_correct_row :: Board -> Int -> Bool
 one_below_correct_row b n = row b n == goal_row n + 1
 
+in_last_column :: Board -> Int -> Bool
+in_last_column b n = col b n == dim - 1
+
 goal_row :: Int -> Int
 goal_row n = (n-1) `div` dim
 
@@ -206,12 +209,18 @@ right_shift b n d = Lft : (take (5*count) $ cycle shift)
          shift = [d,Rt,Rt,opposite d,Lft]
 
 n_to_place :: Strategy
-n_to_place n = n_to_last_column n +> up_to_goal_row n +> slide_over n
+n_to_place n = n_to_last_column n +> up_to_goal_row n +> slide_left n
 
-slide_over :: Strategy
-slide_over n b  = take (5*count) $ cycle slide
+n_to_row :: Strategy
+n_to_row n = n_to_last_column n +> up_to_goal_row n
+
+n_to_col :: Strategy
+n_to_col n = n_to_row n +> slide_left n
+
+slide_left :: Strategy
+slide_left n b = Rt : (take (5*count) $ cycle slide)
   where slide = [Dn,Lft,Lft,Up,Rt]
-        count = col b n - (n `mod` dim - 1)
+        count = col b n - (n `mod` dim) 
 
 solve_top_row :: Action 
 solve_top_row = solve_row 0 +> to_action [Dn]
@@ -237,31 +246,29 @@ final_fix_last :: Strategy
 final_fix_last n b | one_below_correct_row b n = final_slide b
                    | otherwise                 = (up_to_below_goal_row n +> final_slide) b
 
-b1 = do_action g1 solve_top_row 
-b1' = do_action g1 finish_top_row 
-b1_ = do_action b1' (n_to_last_column 5 +> up_to_goal_row 5)
+g1' = do_action g1 finish_top_row 
+g2' = do_action g2 finish_top_row 
+g3' = do_action g3 finish_top_row 
+g4' = do_action g4 finish_top_row 
+g5' = do_action g5 finish_top_row 
 
-b2 = do_action g2 solve_top_row 
-b2' = do_action g2 finish_top_row 
+h1' = do_action h1 finish_top_row 
+h2' = do_action h2 finish_top_row 
+h3' = do_action h3 finish_top_row 
+h4' = do_action h4 finish_top_row 
+h5' = do_action h5 finish_top_row 
 
-b3 = do_action g3 solve_top_row 
-b3' = do_action g3 finish_top_row 
+h1'' = do_action h1' $ n_to_place 5
+h1_ = do_action h1' $ n_to_last_column 5
+h1__ = do_action h1' $ n_to_row 5
 
-b5 = do_action g5 solve_top_row 
-b5' = do_action g5 finish_top_row 
-
-b19 = do_action g19 solve_top_row 
-b19' = do_action g19 finish_top_row 
-
-b12 = do_action h12 solve_top_row 
-b12' = do_action h12 finish_top_row 
 
 final_slide :: Action
 final_slide = to_action [Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Lft,Lft,Dn]
 
 up_to_goal_row :: Strategy
-up_to_goal_row n b | in_correct_row b n = [Up,Rt]
-                   | otherwise          = Up : Rt : (take (5*(row b n - goal_row n)) $ cycle shift_up)
+up_to_goal_row n b | in_correct_row b n = []
+                   | otherwise          = Up : Rt : (take (5*(row b n - goal_row n)) $ cycle shift_up) ++ [Lft]
 
 up_to_below_goal_row :: Strategy
 up_to_below_goal_row n b = Up : Rt : (take (5*(row b n - goal_row n - 2)) $ cycle shift_up) ++ [Dn,Lft,Up]

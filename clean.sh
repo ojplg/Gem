@@ -1,4 +1,4 @@
-#/bin/sh
+#!/bin/sh
 
 rm Gem.o
 rm Gem.hi
