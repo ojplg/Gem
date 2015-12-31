@@ -228,9 +228,6 @@ solve_row_front r = foldr (+>) empty_action (map (\n-> n_to_place n) (take (dim-
 empty_action :: Action
 empty_action = \_ -> []
 
-finish_top_row :: Action
-finish_top_row = solve_row 0
-
 fix_last_in_row :: Strategy
 fix_last_in_row r b | in_place b n = []
                     | otherwise    = (n_to_last_column n +> up_to_below_goal_row n +> final_slide) b

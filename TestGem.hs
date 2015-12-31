@@ -51,7 +51,7 @@ test_n_to_row x = in_correct_row b' n &&
 
 test_fix_five x = in_place b' 5
   where b  = start x
-        b' = do_action (do_action b finish_top_row) $ n_to_place 5
+        b' = do_action (do_action b $ solve_row 0) $ n_to_place 5
 
 -- Make sure that after calling this for the value 5
 --  a) 5 is in the correct row
@@ -88,7 +88,7 @@ test_solve_top_row x = in_place b' 1 && in_place b' 2 && in_place b' 3
 
 test_finish_top_row x = in_place b' 1 && in_place b' 2 && in_place b' 3 && in_place b' 4
   where b = start x
-        b' = do_action b finish_top_row
+        b' = do_action b $ solve_row 0
 
 test_finish_top_two_rows x = all (\n -> in_place b' n) [1..8]
   where b = start x
