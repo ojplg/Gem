@@ -209,7 +209,7 @@ right_shift b n d = Lft : (take (5*count) $ cycle shift)
          shift = [d,Rt,Rt,opposite d,Lft]
 
 n_to_place :: Strategy
-n_to_place n = n_to_last_column n +> up_to_goal_row n +> slide_left n
+n_to_place = n_to_col
 
 n_to_row :: Strategy
 n_to_row n = n_to_last_column n +> up_to_goal_row n
@@ -225,29 +225,19 @@ slide_left n b = Rt : (take (5*count) $ cycle slide)
 fix_top_row :: Board -> Board
 fix_top_row b = do_action b finish_top_row
 
-solve_top_row :: Action 
-solve_top_row = solve_row 0 +> to_action [Dn]
-
-solve_row :: Strategy
-solve_row r = foldr (+>) empty_action (map (\n-> n_to_place n) (take (dim-1) $ row_places r))
+solve_row_front :: Strategy
+solve_row_front r = foldr (+>) empty_action (map (\n-> n_to_place n) (take (dim-1) $ row_places r))
 
 empty_action :: Action
 empty_action = \_ -> []
 
 finish_top_row :: Action
-finish_top_row = solve_top_row +> (fix_last_in_row $ last_in_row 0)
-
-last_in_row :: Int -> Int
-last_in_row r = dim * (r+1)
+finish_top_row = solve_row_front 0 +> to_action [Dn] +> (fix_last_in_row 0)
 
 fix_last_in_row :: Strategy
-fix_last_in_row n b | in_place b n          = []
-                    | in_correct_column b n = (blank_to_left n +> final_fix_last n) b
-                    | otherwise             = (n_to_last_column n +> final_fix_last n) b
-
-final_fix_last :: Strategy
-final_fix_last n b | one_below_correct_row b n = final_slide b
-                   | otherwise                 = (up_to_below_goal_row n +> final_slide) b
+fix_last_in_row r b | in_place b n = []
+                    | otherwise    = (n_to_last_column n +> up_to_below_goal_row n +> final_slide) b
+  where n = dim * (r+1)
 
 g0' = do_action g0 finish_top_row
 g1' = do_action g1 finish_top_row 

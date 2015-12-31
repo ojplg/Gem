@@ -84,7 +84,7 @@ test_n_to_place x = in_place b' n
 
 test_solve_top_row x = in_place b' 1 && in_place b' 2 && in_place b' 3
   where b = start x
-        b' = do_action b solve_top_row
+        b' = do_action b $ solve_row_front 0
 
 test_finish_top_row x = in_place b' 1 && in_place b' 2 && in_place b' 3 && in_place b' 4
   where b = start x
