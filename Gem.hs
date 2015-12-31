@@ -120,7 +120,6 @@ g11 = start 11
 g12 = start 12
 g19 = start 19
 g24 = start 24
-g154 = start 154
 h1 = start $ -1
 h2 = start $ -2
 h3 = start $ -3
@@ -130,10 +129,15 @@ h6 = start $ -6
 h7 = start $ -7
 h8 = start $ -8
 h9 = start $ -9
-h12 = start $ -12
-h84 = start $ -84
-h140 = start $ -140
-h430 = start $ -430
+
+p0 = do_action g0 (solve_row 0 +> solve_row 1)
+p1 = do_action g1 (solve_row 0 +> solve_row 1)
+p2 = do_action g2 (solve_row 0 +> solve_row 1)
+p3 = do_action g3 (solve_row 0 +> solve_row 1)
+p4 = do_action g4 (solve_row 0 +> solve_row 1)
+p5 = do_action g5 (solve_row 0 +> solve_row 1)
+p6 = do_action g6 (solve_row 0 +> solve_row 1)
+p7 = do_action g7 (solve_row 0 +> solve_row 1)
 
 -- solver helpers
 in_place :: Board -> Int -> Bool
