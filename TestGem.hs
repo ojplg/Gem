@@ -58,7 +58,7 @@ test_fix_five x = in_place b' 5
 --  b) the top row is still good
 test_five_to_correct_row x = in_correct_row b' 5 &&
                                row_done b' 0
-  where b  = fix_top_row $ start x
+  where b  = do_action (start x) (solve_row 0)
         b' = do_action b $ n_to_row 5
 
 row_done :: Board -> Int -> Bool

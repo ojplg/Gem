@@ -222,9 +222,6 @@ slide_left n b = Rt : (take (5*count) $ cycle slide)
   where slide = [Dn,Lft,Lft,Up,Rt]
         count = col b n - (n `mod` dim) 
 
-fix_top_row :: Board -> Board
-fix_top_row b = do_action b finish_top_row
-
 solve_row_front :: Strategy
 solve_row_front r = foldr (+>) empty_action (map (\n-> n_to_place n) (take (dim-1) $ row_places r))
 
@@ -240,39 +237,6 @@ fix_last_in_row r b | in_place b n = []
   where n = dim * (r+1)
 
 solve_row r = solve_row_front r +> to_action [Dn] +> fix_last_in_row r
-
-g0' = do_action g0 finish_top_row
-g1' = do_action g1 finish_top_row 
-g2' = do_action g2 finish_top_row 
-g3' = do_action g3 finish_top_row 
-g4' = do_action g4 finish_top_row 
-g5' = do_action g5 finish_top_row 
-
-h1' = do_action h1 finish_top_row 
-h2' = do_action h2 finish_top_row 
-h3' = do_action h3 finish_top_row 
-h4' = do_action h4 finish_top_row 
-h5' = do_action h5 finish_top_row 
-
-g0'' = do_action g0' $ n_to_place 5
-g0_ = do_action g0' $ n_to_last_column 5
-g0__ = do_action g0' $ n_to_row 5
-
-g1'' = do_action g1' $ n_to_place 5
-g1_ = do_action g1' $ n_to_last_column 5
-g1__ = do_action g1' $ n_to_row 5
-
-g3'' = do_action g3' $ n_to_place 5
-g3_ = do_action g3' $ n_to_last_column 5
-g3__ = do_action g3' $ n_to_row 5
-
-g4'' = do_action g4' $ n_to_place 5
-g4_ = do_action g4' $ n_to_last_column 5
-g4__ = do_action g4' $ n_to_row 5
-
-h1'' = do_action h1' $ n_to_place 5
-h1_ = do_action h1' $ n_to_last_column 5
-h1__ = do_action h1' $ n_to_row 5
 
 final_slide :: Action
 final_slide = to_action [Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Lft,Lft,Dn]
