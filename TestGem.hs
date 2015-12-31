@@ -89,3 +89,8 @@ test_solve_top_row x = in_place b' 1 && in_place b' 2 && in_place b' 3
 test_finish_top_row x = in_place b' 1 && in_place b' 2 && in_place b' 3 && in_place b' 4
   where b = start x
         b' = do_action b finish_top_row
+
+test_finish_top_two_rows x = all (\n -> in_place b' n) [1..8]
+  where b = start x
+        b' = do_action b (solve_row 0 +> solve_row 1)
+

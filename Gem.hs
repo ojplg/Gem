@@ -232,12 +232,14 @@ empty_action :: Action
 empty_action = \_ -> []
 
 finish_top_row :: Action
-finish_top_row = solve_row_front 0 +> to_action [Dn] +> (fix_last_in_row 0)
+finish_top_row = solve_row 0
 
 fix_last_in_row :: Strategy
 fix_last_in_row r b | in_place b n = []
                     | otherwise    = (n_to_last_column n +> up_to_below_goal_row n +> final_slide) b
   where n = dim * (r+1)
+
+solve_row r = solve_row_front r +> to_action [Dn] +> fix_last_in_row r
 
 g0' = do_action g0 finish_top_row
 g1' = do_action g1 finish_top_row 
@@ -271,7 +273,6 @@ g4__ = do_action g4' $ n_to_row 5
 h1'' = do_action h1' $ n_to_place 5
 h1_ = do_action h1' $ n_to_last_column 5
 h1__ = do_action h1' $ n_to_row 5
-
 
 final_slide :: Action
 final_slide = to_action [Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Lft,Lft,Dn]
