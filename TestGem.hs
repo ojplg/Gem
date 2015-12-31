@@ -76,9 +76,11 @@ test_blank_to_left x = position b n `elem` first_column || position b' n == blan
         b' = do_action b $ blank_to_left n
         n = valid_tile x
 
-test_n_to_place x = in_place b' 1
+test_n_to_place x = in_place b' n
+                      && blank b' == position b' n + 1
   where b = start x
-        b' = do_action b $ n_to_place 1
+        b' = do_action b $ n_to_place n
+        n = valid_top_tile x
 
 test_solve_top_row x = in_place b' 1 && in_place b' 2 && in_place b' 3
   where b = start x
