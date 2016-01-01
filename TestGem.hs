@@ -23,7 +23,7 @@ test_blank_to_col x = and [blank_col b0 == 0, blank_col b1 == 1, blank_col b2 ==
         b2 = do_action b $ blank_to_col 2
         b3 = do_action b $ blank_to_col 3
 
-test_blank_to_right x = position b 1 `elem` last_column || position b' 1 + 1 == blank b'
+test_blank_to_right x = position b 1 `elem` last_column b || position b' 1 + 1 == blank b'
   where b  = start x
         b' = do_action b $ blank_to_right 1
 
@@ -31,7 +31,7 @@ test_blank_to_right x = position b 1 `elem` last_column || position b' 1 + 1 == 
 -- a) the n tile is in the last column
 -- b) the n tile is in the same row as it started
 -- c) the blank is to the immediate left of the n tile
-test_n_to_last_column x = position b' n `elem` last_column && 
+test_n_to_last_column x = position b' n `elem` last_column b && 
                             row b n == row b' n &&
                             blank b' == position b' n - 1
   where b  = start x
@@ -62,7 +62,7 @@ test_five_to_correct_row x = in_correct_row b' 5 &&
         b' = do_action b $ n_to_row 5
 
 row_done :: Board -> Int -> Bool
-row_done b n = all (\n -> in_place b n) $ row_places n
+row_done b n = all (\n -> in_place b n) $ row_places b n
 
 test_n_to_col x = in_correct_row b' n &&
                     in_correct_column b' n &&
@@ -71,7 +71,7 @@ test_n_to_col x = in_correct_row b' n &&
         b' = do_action b $ n_to_col n
         n  = valid_top_tile x
 
-test_blank_to_left x = position b n `elem` first_column || position b' n == blank b' + 1
+test_blank_to_left x = position b n `elem` first_column b || position b' n == blank b' + 1
   where b  = start x
         b' = do_action b $ blank_to_left n
         n = valid_tile x
@@ -94,3 +94,6 @@ test_finish_top_two_rows x = all (\n -> in_place b' n) [1..8]
   where b = start x
         b' = do_action b (solve_row 0 +> solve_row 1)
 
+test_third_row_start x = all (\n -> in_place b' n) [1..10]
+  where b = do_action (start x) (solve_row 0 +> solve_row 1)
+        b' = do_action b (n_to_place 9 +> n_to_place 10)

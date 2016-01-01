@@ -9,11 +9,14 @@ data Move = Up | Dn | Lft | Rt deriving (Eq,Show)
 type Strategy =  Int -> Action
 type Action = Board -> [Move]
 
-dim :: Int
-dim = 4
+dimension :: Int
+dimension = 4
 
 size :: Int
-size = dim^2
+size = dimension^2
+
+dim :: Board -> Int
+dim = round . sqrt . fromIntegral . length
 
 -- Fuctions for display
 format :: Int -> String
@@ -21,19 +24,19 @@ format n | n==size    = "   "
          | n<10       = "  " ++ show n
          | otherwise  = " " ++ show n
 
-break_lines :: [String] -> [String]
-break_lines [] = []
-break_lines ls = ((concat (take dim ls)) ++ "\n") : break_lines (drop dim ls)
+break_lines :: Board -> [String] -> [String]
+break_lines b [] = []
+break_lines b ls = ((concat (take (dim b )ls)) ++ "\n") : break_lines b (drop (dim b) ls)
 
-out b = putStr $ concat $ (break_lines $ map format b) 
+out b = putStr $ concat $ (break_lines b $ map format b) 
 
 -- Edges
-top_row = [0..dim-1]
-bottom_row = [size-dim .. size-1]
-first_column = [n * dim | n <- [0..dim-1]]
-last_column = [n * dim - 1 | n <- [1..dim]]
+top_row b = [0..dim b-1]
+bottom_row b = [size-dim b .. size-1]
+first_column b = [n * dim b| n <- [0..dim b-1]]
+last_column b = [n * dim b - 1 | n <- [1..dim b]]
 
-row_places r = [r*dim+1..(r+1)*dim]
+row_places b r = [r*dim b+1..(r+1)*dim b]
 
 -- Functions for moving
 position :: Board -> Int -> Int
@@ -48,17 +51,17 @@ opposite Dn = Up
 opposite Lft = Rt
 opposite Rt = Lft
 
-no Up  b = blank b `elem` top_row
-no Dn  b = blank b `elem` bottom_row
-no Lft b = blank b `elem` first_column
-no Rt  b = blank b `elem` last_column
+no Up  b = blank b `elem` top_row b
+no Dn  b = blank b `elem` bottom_row b 
+no Lft b = blank b `elem` first_column b
+no Rt  b = blank b `elem` last_column b
 
 -- This moves the BLANK in the direction indicated
 move :: Board -> Move -> Board
 move b m | no m b    = b
          | otherwise = move' b m
-  where move' b Up  = swap b (blank b) ((blank b)-dim)
-        move' b Dn  = swap b (blank b) ((blank b)+dim)
+  where move' b Up  = swap b (blank b) ((blank b)-dim b)
+        move' b Dn  = swap b (blank b) ((blank b)+dim b)
         move' b Lft = swap b (blank b) ((blank b)-1)
         move' b Rt  = swap b (blank b) ((blank b)+1)
         swap board x y = map sub [0..size-1]
@@ -70,10 +73,10 @@ moves :: Board -> [Move] -> Board
 moves b ms = foldl move b ms
 
 row :: Board -> Int -> Int
-row b n = position b n `div` dim
+row b n = position b n `div` dim b
 
 col :: Board -> Int -> Int
-col b n = position b n `mod` dim
+col b n = position b n `mod` dim b
 
 blank_row :: Board -> Int
 blank_row b = row b size
@@ -144,26 +147,26 @@ in_place :: Board -> Int -> Bool
 in_place b n = position b n == n - 1
 
 in_correct_column :: Board -> Int -> Bool
-in_correct_column b n = col b n == goal_column n
+in_correct_column b n = col b n == goal_column b n
 
 in_correct_row :: Board -> Int ->  Bool
-in_correct_row b n = row b n == goal_row n
+in_correct_row b n = row b n == goal_row b n
 
 one_below_correct_row :: Board -> Int -> Bool
-one_below_correct_row b n = row b n == goal_row n + 1
+one_below_correct_row b n = row b n == goal_row b n + 1
 
 in_last_column :: Board -> Int -> Bool
-in_last_column b n = col b n == dim - 1
+in_last_column b n = col b n == dim b - 1
 
-goal_row :: Int -> Int
-goal_row n = (n-1) `div` dim
+goal_row :: Board -> Int -> Int
+goal_row b n = (n-1) `div` dim b
 
-goal_column :: Int -> Int 
-goal_column n = (n-1) `mod` dim
+goal_column :: Board -> Int -> Int 
+goal_column b n = (n-1) `mod` dim b
 
 blank_to_right :: Strategy
 blank_to_right n b | br == nr && bc >  nc = replicate (bc - nc - 1) Lft
-                   | br == nr && bc <  nc &&  br == dim - 1 = Up : replicate (nc - bc + 1) Rt ++ [Dn]
+                   | br == nr && bc <  nc &&  br == dim b - 1 = Up : replicate (nc - bc + 1) Rt ++ [Dn]
                    | br == nr && bc <  nc = Dn : replicate (nc - bc + 1) Rt ++ [Up] 
                    | br >  nr && bc >  nc = replicate (bc - nc - 1) Lft ++ replicate (br - nr) Up
                    | br >  nr && bc == nc = Rt : replicate (br - nr + 0) Up
@@ -177,9 +180,9 @@ blank_to_right n b | br == nr && bc >  nc = replicate (bc - nc - 1) Lft
          nc = col b n
 
 blank_to_left :: Strategy
-blank_to_left n b | br == nr && bc >  nc && br == dim - 1 = Up : replicate (bc - nc + 1) Lft ++ [Dn]  -- h430
+blank_to_left n b | br == nr && bc >  nc && br == dim b - 1 = Up : replicate (bc - nc + 1) Lft ++ [Dn]  -- h430
                   | br == nr && bc >  nc = Dn : replicate (bc -nc + 1) Lft ++ [Up]  -- h84
-                  | br == nr && bc <  nc && br == dim - 1 = Up : replicate (nc - bc - 1) Rt ++ [Dn]  -- works for g154
+                  | br == nr && bc <  nc && br == dim b - 1 = Up : replicate (nc - bc - 1) Rt ++ [Dn]  -- works for g154
                   | br == nr && bc <  nc = Dn : replicate (nc - bc - 1) Rt ++ [Up]  -- works for h2 
                   | br >  nr && bc >  nc = replicate (bc - nc + 1) Lft ++ replicate (br - nr) Up
                   | br >  nr && bc == nc = Lft : replicate (br - nr + 0) Up  -- g12
@@ -201,15 +204,15 @@ blank_to_row i b | i >= blank_row b = replicate (i - blank_row b) Dn
                  | otherwise        = replicate (blank_row b - i) Up
 
 n_to_last_column :: Strategy
-n_to_last_column n b | position b n `elem` last_column = blank_to_left n b
-                     | position b n `elem` bottom_row  = ms ++ right_shift b' n Up
+n_to_last_column n b | position b n `elem` last_column b = blank_to_left n b
+                     | position b n `elem` bottom_row b  = ms ++ right_shift b' n Up
                      | otherwise = ms ++ right_shift b' n Dn
   where b' = moves b ms
         ms = blank_to_right n b 
 
 right_shift :: Board -> Int -> Move -> [Move]
 right_shift b n d = Lft : (take (5*count) $ cycle shift)
-   where count = dim - (col b n) - 2
+   where count = dim b - (col b n) - 2
          shift = [d,Rt,Rt,opposite d,Lft]
 
 n_to_place :: Strategy
@@ -224,10 +227,12 @@ n_to_col n = n_to_row n +> slide_left n
 slide_left :: Strategy
 slide_left n b = Rt : (take (5*count) $ cycle slide)
   where slide = [Dn,Lft,Lft,Up,Rt]
-        count = col b n - (n `mod` dim) 
+        count = col b n - (n `mod` dim b) 
 
 solve_row_front :: Strategy
-solve_row_front r = foldr (+>) empty_action (map (\n-> n_to_place n) (take (dim-1) $ row_places r))
+--solve_row_front r b = foldr (+>) empty_action (map (\n-> n_to_place n b) (take (dim b-1) $ row_places b r))
+solve_row_front r b = (n_to_place (head ps) +> n_to_place (ps !! 1) +> n_to_place (ps !! 2)) b
+   where ps = take (dim b-1) $ row_places b r
 
 empty_action :: Action
 empty_action = \_ -> []
@@ -235,7 +240,7 @@ empty_action = \_ -> []
 fix_last_in_row :: Strategy
 fix_last_in_row r b | in_place b n = []
                     | otherwise    = (n_to_last_column n +> up_to_below_goal_row n +> final_slide) b
-  where n = dim * (r+1)
+  where n = dim b * (r+1)
 
 solve_row r = solve_row_front r +> to_action [Dn] +> fix_last_in_row r
 
@@ -243,10 +248,10 @@ final_slide :: Action
 final_slide = to_action [Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Lft,Lft,Dn]
 
 up_to_goal_row :: Strategy
-up_to_goal_row n b = (take (5*(row b n - goal_row n)) $ cycle shift_up) 
+up_to_goal_row n b = (take (5*(row b n - goal_row b n)) $ cycle shift_up) 
 
 up_to_below_goal_row :: Strategy
-up_to_below_goal_row n b = (take (5*(row b n - goal_row n - 1)) $ cycle shift_up) 
+up_to_below_goal_row n b = (take (5*(row b n - goal_row b n - 1)) $ cycle shift_up) 
 
 shift_up :: [Move]
 shift_up = [Up,Rt,Dn,Lft,Up]
