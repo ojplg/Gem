@@ -12,27 +12,27 @@ type Action = Board -> [Move]
 dimension :: Int
 dimension = 4
 
-size :: Int
-size = dimension^2
+size :: Board -> Int
+size b = (dim b)^2
 
 dim :: Board -> Int
 dim = round . sqrt . fromIntegral . length
 
 -- Fuctions for display
-format :: Int -> String
-format n | n==size    = "   "
-         | n<10       = "  " ++ show n
-         | otherwise  = " " ++ show n
+format :: Board -> Int -> String
+format b n | n==size b  = "   "
+           | n<10       = "  " ++ show n
+           | otherwise  = " " ++ show n
 
 break_lines :: Board -> [String] -> [String]
 break_lines b [] = []
 break_lines b ls = ((concat (take (dim b )ls)) ++ "\n") : break_lines b (drop (dim b) ls)
 
-out b = putStr $ concat $ (break_lines b $ map format b) 
+out b = putStr $ concat $ (break_lines b $ map (format b) b) 
 
 -- Edges
 top_row b = [0..dim b-1]
-bottom_row b = [size-dim b .. size-1]
+bottom_row b = [size b-dim b .. size b-1]
 first_column b = [n * dim b| n <- [0..dim b-1]]
 last_column b = [n * dim b - 1 | n <- [1..dim b]]
 
@@ -43,7 +43,7 @@ position :: Board -> Int -> Int
 position b n = fromJust $ findIndex (==n) b
 
 blank :: Board -> Int
-blank b = position b size
+blank b = position b $ size b
 
 opposite :: Move -> Move
 opposite Up = Dn
@@ -64,7 +64,7 @@ move b m | no m b    = b
         move' b Dn  = swap b (blank b) ((blank b)+dim b)
         move' b Lft = swap b (blank b) ((blank b)-1)
         move' b Rt  = swap b (blank b) ((blank b)+1)
-        swap board x y = map sub [0..size-1]
+        swap board x y = map sub [0..size b-1]
           where sub n | n == x    = board !! y
                       | n == y    = board !! x
                       | otherwise = board !! n
@@ -79,10 +79,10 @@ col :: Board -> Int -> Int
 col b n = position b n `mod` dim b
 
 blank_row :: Board -> Int
-blank_row b = row b size
+blank_row b = row b $ size b
 
 blank_col :: Board -> Int
-blank_col b = col b size
+blank_col b = col b $ size b
 
 -- randomizer
 rands :: Int -> Int -> [Move]
@@ -105,33 +105,39 @@ rand_list :: Int -> Int -> [(Int, StdGen)]
 rand_list seed length = build_rand_list length [next $ mkStdGen seed]
 
 start :: Int -> Board
-start seed = moves [1..size] $ rands seed 1000
+start seed = puzzle' seed 4
+
+puzzle :: Int -> Board
+puzzle seed = puzzle' seed (seed `mod` 6 + 4)
+
+puzzle' :: Int -> Int -> Board
+puzzle' seed dimen = moves [1..dimen^2] $ rands seed 1000
 
 -- some games
-g0 = start 0
-g1 = start 1
-g2 = start 2
-g3 = start 3
-g4 = start 4
-g5 = start 5
-g6 = start 6
-g7 = start 7
-g8 = start 8
-g9 = start 9
-g10 = start 10
-g11 = start 11
-g12 = start 12
-g19 = start 19
-g24 = start 24
-h1 = start $ -1
-h2 = start $ -2
-h3 = start $ -3
-h4 = start $ -4
-h5 = start $ -5
-h6 = start $ -6
-h7 = start $ -7
-h8 = start $ -8
-h9 = start $ -9
+g0 = puzzle 0
+g1 = puzzle 1
+g2 = puzzle 2
+g3 = puzzle 3
+g4 = puzzle 4
+g5 = puzzle 5
+g6 = puzzle 6
+g7 = puzzle 7
+g8 = puzzle 8
+g9 = puzzle 9
+g10 = puzzle 10
+g11 = puzzle 11
+g12 = puzzle 12
+g19 = puzzle 19
+g24 = puzzle 24
+h1 = puzzle $ -1
+h2 = puzzle $ -2
+h3 = puzzle $ -3
+h4 = puzzle $ -4
+h5 = puzzle $ -5
+h6 = puzzle $ -6
+h7 = puzzle $ -7
+h8 = puzzle $ -8
+h9 = puzzle $ -9
 
 p0 = do_action g0 (solve_row 0 +> solve_row 1)
 p1 = do_action g1 (solve_row 0 +> solve_row 1)
@@ -231,8 +237,9 @@ slide_left n b = Rt : (take (5*count) $ cycle slide)
 
 solve_row_front :: Strategy
 --solve_row_front r b = foldr (+>) empty_action (map (\n-> n_to_place n b) (take (dim b-1) $ row_places b r))
-solve_row_front r b = (n_to_place (head ps) +> n_to_place (ps !! 1) +> n_to_place (ps !! 2)) b
-   where ps = take (dim b-1) $ row_places b r
+--solve_row_front r b = (n_to_place (head ps) +> n_to_place (ps !! 1) +> n_to_place (ps !! 2)) b
+solve_row_front r b = foldr (+>) empty_action (map (\n -> n_to_place n) ps) b
+  where ps = take (dim b-1) $ row_places b r
 
 empty_action :: Action
 empty_action = \_ -> []

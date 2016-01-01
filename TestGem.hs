@@ -35,7 +35,7 @@ test_n_to_last_column x = position b' n `elem` last_column b &&
                             row b n == row b' n &&
                             blank b' == position b' n - 1
   where b  = start x
-        b' =  do_action b $ n_to_last_column n
+        b' = do_action b $ n_to_last_column n
         n  = valid_tile x
 
 -- Make sure that
@@ -86,12 +86,13 @@ test_solve_top_row x = in_place b' 1 && in_place b' 2 && in_place b' 3
   where b = start x
         b' = do_action b $ solve_row_front 0
 
-test_finish_top_row x = in_place b' 1 && in_place b' 2 && in_place b' 3 && in_place b' 4
-  where b = start x
+test_finish_top_row x = all (\n -> in_place b' n) ps
+  where b = puzzle x
         b' = do_action b $ solve_row 0
+        ps = [1..dim b]
 
-test_finish_top_two_rows x = all (\n -> in_place b' n) [1..8]
-  where b = start x
+test_finish_top_two_rows x = all (\n -> in_place b' n) [1..2*(dim b)]
+  where b = puzzle x
         b' = do_action b (solve_row 0 +> solve_row 1)
 
 test_third_row_start x = all (\n -> in_place b' n) [1..10]
