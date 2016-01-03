@@ -105,10 +105,10 @@ start :: Int -> Board
 start seed = puzzle' seed 4
 
 puzzle :: Int -> Board
-puzzle seed = puzzle' seed (seed `mod` 6 + 3)
+puzzle seed = puzzle' seed (seed `mod` 3 + 3)
 
 puzzle' :: Int -> Int -> Board
-puzzle' seed dimen = moves [1..dimen^2] $ rands seed 10000
+puzzle' seed dimen = moves [1..dimen^2] $ rands seed 1000
 
 -- some games
 g0 = puzzle 0
@@ -136,14 +136,16 @@ h7 = puzzle $ -7
 h8 = puzzle $ -8
 h9 = puzzle $ -9
 
-p0 = do_action g0 (solve_row 0 +> solve_row 1)
-p1 = do_action g1 (solve_row 0 +> solve_row 1)
-p2 = do_action g2 (solve_row 0 +> solve_row 1)
-p3 = do_action g3 (solve_row 0 +> solve_row 1)
-p4 = do_action g4 (solve_row 0 +> solve_row 1)
-p5 = do_action g5 (solve_row 0 +> solve_row 1)
-p6 = do_action g6 (solve_row 0 +> solve_row 1)
-p7 = do_action g7 (solve_row 0 +> solve_row 1)
+p0 = do_action g0 solve_top_rows
+p1 = do_action g1 solve_top_rows
+p2 = do_action g2 solve_top_rows
+p3 = do_action g3 solve_top_rows
+p4 = do_action g4 solve_top_rows
+p5 = do_action g5 solve_top_rows
+p6 = do_action g6 solve_top_rows
+p7 = do_action g7 solve_top_rows
+p8 = do_action g8 solve_top_rows
+p9 = do_action g9 solve_top_rows
 
 -- solver helpers
 in_place :: Board -> Int -> Bool
@@ -248,7 +250,7 @@ solve_row :: Strategy
 solve_row r = solve_row_front r +> to_action [Dn] +> fix_last_in_row r
 
 final_slide :: Action
-final_slide = to_action [Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Lft,Lft,Dn]
+final_slide = to_action [Up,Rt,Dn,Lft,Up,Lft,Dn]
 
 up_to_goal_row :: Strategy
 up_to_goal_row n b = (take (5*(row b n - goal_row b n)) $ cycle shift_up) 
