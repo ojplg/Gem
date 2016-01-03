@@ -92,9 +92,14 @@ test_finish_top_row x = all (\n -> in_place b' n) ps
         ps = [1..dim b]
 
 test_finish_top_two_rows x = all (\n -> in_place b' n) [1..2*(dim b)]
-  where b = puzzle x
+  where b = puzzle' x 4
         b' = do_action b (solve_row 0 +> solve_row 1)
 
 test_third_row_start x = all (\n -> in_place b' n) [1..10]
   where b = do_action (start x) (solve_row 0 +> solve_row 1)
         b' = do_action b (n_to_place 9 +> n_to_place 10)
+
+test_finish_top_rows x = all (\n -> in_place b' n) [1..t]
+  where b = puzzle x
+        b' = do_action b solve_top_rows
+        t = size b - 2 * dim b

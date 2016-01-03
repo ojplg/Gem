@@ -16,6 +16,7 @@ main = mapM_ quickCheck [prop_adds_right,
                            test_n_to_col,
                            test_solve_top_row,
                            test_finish_top_row,
-                           test_finish_top_two_rows
+                           test_finish_top_two_rows,
+                           test_finish_top_rows
                         ]
  

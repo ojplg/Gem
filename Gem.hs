@@ -9,9 +9,6 @@ data Move = Up | Dn | Lft | Rt deriving (Eq,Show)
 type Strategy =  Int -> Action
 type Action = Board -> [Move]
 
-dimension :: Int
-dimension = 4
-
 size :: Board -> Int
 size b = (dim b)^2
 
@@ -108,10 +105,10 @@ start :: Int -> Board
 start seed = puzzle' seed 4
 
 puzzle :: Int -> Board
-puzzle seed = puzzle' seed (seed `mod` 6 + 4)
+puzzle seed = puzzle' seed (seed `mod` 6 + 3)
 
 puzzle' :: Int -> Int -> Board
-puzzle' seed dimen = moves [1..dimen^2] $ rands seed 1000
+puzzle' seed dimen = moves [1..dimen^2] $ rands seed 10000
 
 -- some games
 g0 = puzzle 0
@@ -236,8 +233,6 @@ slide_left n b = Rt : (take (5*count) $ cycle slide)
         count = col b n - (n `mod` dim b) 
 
 solve_row_front :: Strategy
---solve_row_front r b = foldr (+>) empty_action (map (\n-> n_to_place n b) (take (dim b-1) $ row_places b r))
---solve_row_front r b = (n_to_place (head ps) +> n_to_place (ps !! 1) +> n_to_place (ps !! 2)) b
 solve_row_front r b = foldr (+>) empty_action (map (\n -> n_to_place n) ps) b
   where ps = take (dim b-1) $ row_places b r
 
@@ -249,6 +244,7 @@ fix_last_in_row r b | in_place b n = []
                     | otherwise    = (n_to_last_column n +> up_to_below_goal_row n +> final_slide) b
   where n = dim b * (r+1)
 
+solve_row :: Strategy
 solve_row r = solve_row_front r +> to_action [Dn] +> fix_last_in_row r
 
 final_slide :: Action
@@ -259,6 +255,17 @@ up_to_goal_row n b = (take (5*(row b n - goal_row b n)) $ cycle shift_up)
 
 up_to_below_goal_row :: Strategy
 up_to_below_goal_row n b = (take (5*(row b n - goal_row b n - 1)) $ cycle shift_up) 
+
+solve_top_rows :: Action
+solve_top_rows b = foldr (+>) empty_action (map solve_row rs) b
+  where rs = [0..dim b-3]
+
+cycle_bottom_rows :: Action
+cycle_bottom_rows b = replicate d Rt ++ [Dn] ++ replicate d Lft
+  where d = dim b
+
+solve_next_to_last_row :: Action
+solve_next_to_last_row = (blank_to_col 0) +> cycle_bottom_rows
 
 shift_up :: [Move]
 shift_up = [Up,Rt,Dn,Lft,Up]
