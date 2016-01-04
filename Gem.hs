@@ -263,11 +263,11 @@ solve_top_rows b = foldr (+>) empty_action (map solve_row rs) b
   where rs = [0..dim b-3]
 
 cycle_bottom_rows :: Action
-cycle_bottom_rows b = replicate d Rt ++ [Dn] ++ replicate d Lft
+cycle_bottom_rows b = replicate d Lft ++ [Up] ++ replicate d Rt ++ [Dn]
   where d = dim b
 
 solve_next_to_last_row :: Action
-solve_next_to_last_row = (blank_to_col 0) +> cycle_bottom_rows
+solve_next_to_last_row = (blank_to_col 0) +> to_action [Dn] +> cycle_bottom_rows
 
 shift_up :: [Move]
 shift_up = [Up,Rt,Dn,Lft,Up]
