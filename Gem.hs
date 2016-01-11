@@ -204,6 +204,9 @@ blank_to_col :: Strategy
 blank_to_col i b | i >= blank_col b = replicate (i - blank_col b) Rt
                  | otherwise        = replicate (blank_col b - i) Lft
 
+blank_to_last_column :: Action
+blank_to_last_column b = blank_to_col (dim b -1) b
+
 blank_to_row :: Strategy 
 blank_to_row i b | i >= blank_row b = replicate (i - blank_row b) Dn
                  | otherwise        = replicate (blank_row b - i) Up
@@ -263,14 +266,16 @@ solve_top_rows b = foldr (+>) empty_action (map solve_row rs) b
   where rs = [0..dim b-3]
 
 cycle_bottom_rows :: Action
-cycle_bottom_rows b = [Up] ++ replicate d Rt ++ [Dn] ++ replicate d Lft
-  where d = dim b
+cycle_bottom_rows b = cycle_n_bottom_rows (dim b) b
+
+cycle_n_bottom_rows :: Strategy
+cycle_n_bottom_rows n b = replicate n Lft ++ [Up] ++ replicate n Rt ++ [Dn]
 
 solve_next_to_last_row :: Action
-solve_next_to_last_row = (blank_to_col 0) +> to_action [Dn] +> cycle_bottom_rows
+solve_next_to_last_row = blank_to_last_column +> to_action [Dn]
 
 fix_nine :: Action
-fix_nine = (blank_to_col 0) +> to_action [Dn] +> fix_nine'
+fix_nine = blank_to_last_column +> to_action [Dn] +> fix_nine'
 
 fix_nine' :: Action
 fix_nine' b | in_place b t = []
