@@ -103,3 +103,8 @@ test_finish_top_rows x = all (\n -> in_place b' n) [1..t]
   where b = puzzle x
         b' = do_action b solve_top_rows
         t = size b - 2 * dim b
+
+test_fix_nine x = all (in_place b') [1..t]
+  where b = do_action (puzzle x) solve_top_rows
+        b' = do_action b fix_nine
+        t = size b - 2 * dim b + 1
