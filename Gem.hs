@@ -265,22 +265,24 @@ solve_top_rows :: Action
 solve_top_rows b = foldr (+>) empty_action (map solve_row rs) b
   where rs = [0..dim b-3]
 
-cycle_bottom_rows :: Action
-cycle_bottom_rows b = cycle_n_bottom_rows (dim b) b
-
 cycle_n_bottom_rows :: Strategy
 cycle_n_bottom_rows n b = replicate n Lft ++ [Up] ++ replicate n Rt ++ [Dn]
 
-solve_next_to_last_row :: Action
-solve_next_to_last_row = blank_to_last_column +> to_action [Dn]
+prep_next_to_last_row :: Action
+prep_next_to_last_row = blank_to_last_column +> to_action [Dn]
+
+place_in_next_to_last_row :: Strategy
+place_in_next_to_last_row n b | col b n >= g = cycle_until_placed n b
+                              | otherwise    = []  
+  where g = goal_column b n
+
+cycle_until_placed :: Strategy
+cycle_until_placed n b | in_place b n = []
+                       | otherwise    = (cycle_n_bottom_rows g +> cycle_until_placed n) b
+  where g = dim b - goal_column b n
 
 fix_nine :: Action
-fix_nine = blank_to_last_column +> to_action [Dn] +> fix_nine'
-
-fix_nine' :: Action
-fix_nine' b | in_place b t = []
-            | otherwise    = (cycle_bottom_rows +> fix_nine') b
-  where t = size b - 2*dim b + 1
+fix_nine b = (prep_next_to_last_row +> (place_in_next_to_last_row (size b - 2 * dim b + 1))) b
 
 shift_up :: [Move]
 shift_up = [Up,Rt,Dn,Lft,Up]
