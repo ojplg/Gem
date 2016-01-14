@@ -268,6 +268,10 @@ solve_top_rows b = foldr (+>) empty_action (map solve_row rs) b
 cycle_n_bottom_rows :: Strategy
 cycle_n_bottom_rows n b = replicate n Lft ++ [Up] ++ replicate n Rt ++ [Dn]
 
+solve_front_next_to_last_row :: Action
+solve_front_next_to_last_row b = (prep_next_to_last_row +> foldr (+>) empty_action (map place_in_next_to_last_row ns)) b
+  where ns = [size b - 2 * dim b + 1 .. size b - 2 * dim b + 2] -- .. size b - dim b - 1]
+
 prep_next_to_last_row :: Action
 prep_next_to_last_row = blank_to_last_column +> to_action [Dn]
 
@@ -276,10 +280,12 @@ place_in_next_to_last_row n b | col b n >= g = cycle_until_placed n b
                               | otherwise    = []  
   where g = goal_column b n
 
+
+
 cycle_until_placed :: Strategy
 cycle_until_placed n b | in_place b n = []
                        | otherwise    = (cycle_n_bottom_rows g +> cycle_until_placed n) b
-  where g = dim b - goal_column b n
+  where g = dim b - goal_column b n - 1
 
 fix_nine :: Action
 fix_nine b = (prep_next_to_last_row +> (place_in_next_to_last_row (size b - 2 * dim b + 1))) b
