@@ -270,17 +270,22 @@ cycle_n_bottom_rows n b = replicate n Lft ++ [Up] ++ replicate n Rt ++ [Dn]
 
 solve_front_next_to_last_row :: Action
 solve_front_next_to_last_row b = (prep_next_to_last_row +> foldr (+>) empty_action (map place_in_next_to_last_row ns)) b
-  where ns = [size b - 2 * dim b + 1 .. size b - 2 * dim b + 2] -- .. size b - dim b - 1]
+  where ns = [size b - 2 * dim b + 1 .. size b - 2 * dim b + 2]
 
 prep_next_to_last_row :: Action
 prep_next_to_last_row = blank_to_last_column +> to_action [Dn]
 
 place_in_next_to_last_row :: Strategy
 place_in_next_to_last_row n b | col b n >= g = cycle_until_placed n b
-                              | otherwise    = []  
+                              | otherwise    = special_maneuver n b
   where g = goal_column b n
 
-
+special_maneuver :: Strategy
+special_maneuver n b = replicate (d-1) Lft ++ [Up,Rt,Dn,Rt,Up,Lft,Lft,Dn,Rt,Up,Rt,Dn] ++ replicate (d-c-2) Rt 
+  where d = dim b
+        g = goal_column b n
+        c = col b n
+        t = g - c
 
 cycle_until_placed :: Strategy
 cycle_until_placed n b | in_place b n = []

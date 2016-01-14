@@ -112,4 +112,4 @@ test_fix_nine x = all (in_place b') [1..t]
 test_solve_front_next_to_last_row x = all (in_place b') [1..t]
   where b = do_action (puzzle x) solve_top_rows
         b' = do_action b solve_front_next_to_last_row
-        t = size b - dim b - 1
+        t = size b - 2 * dim b + 2
