@@ -23,7 +23,7 @@ format b n | n==size b  = "   "
 
 break_lines :: Board -> [String] -> [String]
 break_lines b [] = []
-break_lines b ls = ((concat (take (dim b )ls)) ++ "\n") : break_lines b (drop (dim b) ls)
+break_lines b ls = ((concat (take (dim b) ls)) ++ "\n") : break_lines b (drop (dim b) ls)
 
 out b = putStr $ concat $ (break_lines b $ map (format b) b) 
 
@@ -268,9 +268,12 @@ solve_top_rows b = foldr (+>) empty_action (map solve_row rs) b
 cycle_n_bottom_rows :: Strategy
 cycle_n_bottom_rows n b = replicate n Lft ++ [Up] ++ replicate n Rt ++ [Dn]
 
+next_to_last_row_tiles :: Board -> [Int]
+next_to_last_row_tiles b = [size b - 2 * dim b + 1 .. size b - dim b]
+
 solve_front_next_to_last_row :: Action
 solve_front_next_to_last_row b = (prep_next_to_last_row +> foldr (+>) empty_action (map place_in_next_to_last_row ns)) b
-  where ns = [size b - 2 * dim b + 1 .. size b - 2 * dim b + 2]
+  where ns = take 2 $ next_to_last_row_tiles b
 
 prep_next_to_last_row :: Action
 prep_next_to_last_row = blank_to_last_column +> to_action [Dn]
@@ -280,12 +283,26 @@ place_in_next_to_last_row n b | col b n >= g = cycle_until_placed n b
                               | otherwise    = special_maneuver n b
   where g = goal_column b n
 
+special_maneuver' :: Strategy
+special_maneuver' n b = replicate (d-1) Lft ++ [Up,Rt,Dn,Rt,Up,Lft,Lft,Dn,Rt,Up,Rt,Dn] ++ replicate (d-c-2) Rt 
+  where d = dim b
+        c = col b n
+
 special_maneuver :: Strategy
 special_maneuver n b = replicate (d-1) Lft ++ [Up,Rt,Dn,Rt,Up,Lft,Lft,Dn,Rt,Up,Rt,Dn] ++ replicate (d-c-2) Rt 
   where d = dim b
-        g = goal_column b n
         c = col b n
-        t = g - c
+
+q0 = do_action p0 solve_front_next_to_last_row
+q1 = do_action p1 solve_front_next_to_last_row
+q2 = do_action p2 solve_front_next_to_last_row
+q3 = do_action p3 solve_front_next_to_last_row
+q4 = do_action p4 solve_front_next_to_last_row
+q5 = do_action p5 solve_front_next_to_last_row
+q6 = do_action p6 solve_front_next_to_last_row
+q7 = do_action p7 solve_front_next_to_last_row
+q8 = do_action p8 solve_front_next_to_last_row
+q9 = do_action p9 solve_front_next_to_last_row
 
 cycle_until_placed :: Strategy
 cycle_until_placed n b | in_place b n = []
