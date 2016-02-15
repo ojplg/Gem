@@ -1,11 +1,18 @@
-function drawBoard(){
-	var b = document.body;
-
+function newBoard(){
+	deleteBoard();
+	
 	var startPosition = document.getElementById("startPosition").value;
-
 	var nums = startPosition.split(",");
+	drawBoard(nums);
+}
+
+function drawBoard(nums){
 	var length = nums.length;
 	var dim = Math.sqrt(length);
+
+	var board = document.createElement("div");
+	board.id = "board";
+	document.body.appendChild(board);
 
 	for(var idx=0 ; idx<dim ; idx++){
 		for(var jdx=0; jdx<dim; jdx++){
@@ -15,8 +22,16 @@ function drawBoard(){
 				cell.innerText = nums[index];
 			}
 			cell.style = cellStyle(idx, jdx);
-			b.appendChild(cell);
+			cell.id = "cell_" + nums[index];
+			board.appendChild(cell);
 		}
+	}	
+}
+
+function deleteBoard(){
+	var board = document.getElementById("board");
+	if (board != null){
+		document.body.removeChild(board);
 	}
 }
 
@@ -32,6 +47,6 @@ function cellStyle(row, column){
 	cellstyle += "margin: 5px;";
 	cellstyle += "font-size: 250%;";
 	cellstyle += "left: " + column * 55 + "px;";
-	cellstyle += "top: " + (100 + row * 55) + "px;";
+	cellstyle += "top: " + (150 + row * 55) + "px;";
 	return cellstyle;		
 }
