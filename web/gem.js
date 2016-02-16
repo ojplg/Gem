@@ -67,39 +67,36 @@ function cellStyle(row, column, isBlank){
 	return cellstyle;		
 }
 
-function doMoves(){
-	//console.log("Going to do some moving!");
-	//var blank = document.getElementById("cell_blank");
-	//console.log("Found the blank " + blank);
-	//var blankAt = theBoard.blankCoordinates();
-	//console.log("The blank is now at " + blankAt.row + "," + blankAt.column);
-	//var valueAbove = theBoard.aboveBlank();
-	//console.log("Above the blank is " + valueAbove);
-	//var aboveCell = document.getElementById("cell_" + valueAbove);
-	//console.log("Above cell is " + aboveCell);
-//	var swapValue = theBoard.aboveBlank();
-//	theBoard.swap(swapValue);
-//	drawBoard(theBoard);
+var remainingMoveList;
 
+function doMoves(){
 	var moveListString = document.getElementById("moves").value;
 	var moveList = moveListString.split(",");
-	for(var idx=0;idx<moveList.length; idx++){
-		var move = moveList[idx];
-		if( move == "Up"){
-			theBoard.up();
-		} 
-		if( move == "Dn"){
-			theBoard.down();
-		}
-		if (move == "Lft"){
-			theBoard.left();
-		}
-		if( move == "Rt"){
-			theBoard.right();
-		}
-		drawBoard(theBoard);
-	}
+	var numberMoves = moveList.length;
+	var remainingMoveList = moveList;
 
+	function step(timestamp){
+		var move = remainingMoveList.shift();
+		drawBoardMove(move);
+		if(remainingMoveList.length > 0){
+			window.requestAnimationFrame(step);
+		}
+	}
+	window.requestAnimationFrame(step);
+}
+
+function drawBoardMove(move){
+	switch(move){
+		case "Up": theBoard.up();
+		break;
+		case "Dn": theBoard.down();
+		break;
+		case "Lft": theBoard.left();
+		break;
+		case "Rt": theBoard.right();
+		break;
+	}	
+	drawBoard(theBoard);	
 }
 
 var board = function(nums) {
