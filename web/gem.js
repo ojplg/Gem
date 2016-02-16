@@ -77,9 +77,29 @@ function doMoves(){
 	//console.log("Above the blank is " + valueAbove);
 	//var aboveCell = document.getElementById("cell_" + valueAbove);
 	//console.log("Above cell is " + aboveCell);
-	var swapValue = theBoard.aboveBlank();
-	theBoard.swap(swapValue);
-	drawBoard(theBoard);
+//	var swapValue = theBoard.aboveBlank();
+//	theBoard.swap(swapValue);
+//	drawBoard(theBoard);
+
+	var moveListString = document.getElementById("moves").value;
+	var moveList = moveListString.split(",");
+	for(var idx=0;idx<moveList.length; idx++){
+		var move = moveList[idx];
+		if( move == "Up"){
+			theBoard.up();
+		} 
+		if( move == "Dn"){
+			theBoard.down();
+		}
+		if (move == "Lft"){
+			theBoard.left();
+		}
+		if( move == "Rt"){
+			theBoard.right();
+		}
+		drawBoard(theBoard);
+	}
+
 }
 
 var board = function(nums) {
@@ -119,9 +139,24 @@ var board = function(nums) {
 		return coordinates;
 	}
 
-	that.aboveBlank = function(){
+	that.up = function(){
 		var blankSpot = that.blankCoordinates();
-		return that.valueAt(blankSpot.row - 1, blankSpot.column);
+		that.swap(that.valueAt(blankSpot.row - 1, blankSpot.column));
+	}
+
+	that.left = function(){
+		var blankSpot = that.blankCoordinates();
+		that.swap(that.valueAt(blankSpot.row, blankSpot.column - 1));		
+	}
+
+	that.right = function(){
+		var blankSpot = that.blankCoordinates();
+		that.swap(that.valueAt(blankSpot.row, blankSpot.column + 1));		
+	}
+
+	that.down = function(){
+		var blankSpot = that.blankCoordinates();
+		that.swap(that.valueAt(blankSpot.row + 1, blankSpot.column));		
 	}
 
 	that.swap = function(num){
