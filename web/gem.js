@@ -4,6 +4,7 @@ function newBoard(){
 	deleteBoard();
 	
 	var startPosition = document.getElementById("startPosition").value;
+	console.log("New board " + startPosition);
 	var nums = startPosition.split(",");
 	theBoard = board(nums);
 	drawBoard(theBoard);
@@ -11,11 +12,7 @@ function newBoard(){
 
 function drawBoard(aBoard){
 
-	console.log("A board " + aBoard);
-
 	var dim = aBoard.dimension();
-
-	console.log("dimension is " + dim);
 
 	var boardDiv = document.createElement("div");
 	boardDiv.id = "board";
@@ -71,6 +68,7 @@ var remainingMoveList;
 
 function doMoves(){
 	var moveListString = document.getElementById("moves").value;
+	console.log("Doing move list " + moveListString);
 	var moveList = moveListString.split(",");
 	var numberMoves = moveList.length;
 	var remainingMoveList = moveList;
