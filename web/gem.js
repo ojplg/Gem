@@ -3,16 +3,23 @@ function newBoard(){
 	
 	var startPosition = document.getElementById("startPosition").value;
 	var nums = startPosition.split(",");
-	drawBoard(nums);
+	var aBoard = board(nums);
+	drawBoard(aBoard);
 }
 
-function drawBoard(nums){
-	var length = nums.length;
-	var dim = Math.sqrt(length);
+function drawBoard(aBoard){
 
-	var board = document.createElement("div");
-	board.id = "board";
-	document.body.appendChild(board);
+	console.log("A board " + aBoard);
+
+	var dim = aBoard.dimension();
+
+	console.log("dimension is " + dim);
+
+	var boardDiv = document.createElement("div");
+	boardDiv.id = "board";
+	document.body.appendChild(boardDiv);
+
+	var nums = aBoard.numbers();
 
 	for(var idx=0 ; idx<dim ; idx++){
 		for(var jdx=0; jdx<dim; jdx++){
@@ -20,24 +27,33 @@ function drawBoard(nums){
 			var cell = document.createElement("div");
 			if ( nums[index] < nums.length ){
 				cell.innerText = nums[index];
+				cell.style = cellStyle(idx, jdx, false);
+				cell.id = "cell_" + nums[index];
+			} else {
+				cell.style = cellStyle(idx, jdx, true);
+				cell.id = "cell_blank";
 			}
-			cell.style = cellStyle(idx, jdx);
-			cell.id = "cell_" + nums[index];
-			board.appendChild(cell);
+			boardDiv.appendChild(cell);
 		}
 	}	
+	console.log("Value at 1,1 is " + aBoard.valueAt(1,1));
+	console.log("Blank is at " + aBoard.blankCoordinates());
 }
 
 function deleteBoard(){
-	var board = document.getElementById("board");
-	if (board != null){
-		document.body.removeChild(board);
+	var boardDiv = document.getElementById("board");
+	if (boardDiv != null){
+		document.body.removeChild(boardDiv);
 	}
 }
 
-function cellStyle(row, column){
+function cellStyle(row, column, isBlank){
 	var cellstyle = "font-family: sans-serif;"
-	cellstyle += "background-color: green;";
+	if( isBlank ){
+		cellstyle += "background-color: blue;";
+	} else {
+		cellstyle += "background-color: green;";		
+	}
 	cellstyle += "position:absolute;";
 	cellstyle += "height: 50px;";
 	cellstyle += "width: 50px;";
@@ -49,4 +65,52 @@ function cellStyle(row, column){
 	cellstyle += "left: " + column * 55 + "px;";
 	cellstyle += "top: " + (150 + row * 55) + "px;";
 	return cellstyle;		
+}
+
+function doMoves(){
+	console.log("Going to do some moving!");
+	var blank = document.getElementById("cell_blank");
+	console.log("Found the blank " + blank);
+
+}
+
+
+var board = function(nums) {
+	var that = {};
+
+	that.dimension = function () {
+		return Math.sqrt(nums.length);
+	};
+
+	that.length = function() {
+		return nums.length;
+	}
+
+	that.numbers = function(){
+		return nums;
+	}
+
+	that.valueAt = function(row, column){
+		var index = that.dimension() * row + column;
+		return nums[index];
+	}
+
+	that.blankCoordinates = function(){
+		var blankValue = nums.length;
+		var blankIndex;
+		for (var idx=0; idx< nums.length; idx++ ){
+			if( nums[idx] == blankValue){
+				blankIndex = idx;
+			}
+		}
+		var myRow = Math.floor(blankIndex/that.dimension());
+		var myColumn = blankIndex%that.dimension();
+		var coordinates = {
+			row : myRow,
+			column : myColumn
+		};
+		return coordinates;
+	}
+
+	return that;
 }
