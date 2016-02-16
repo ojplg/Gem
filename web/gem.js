@@ -1,10 +1,12 @@
+var theBoard;
+
 function newBoard(){
 	deleteBoard();
 	
 	var startPosition = document.getElementById("startPosition").value;
 	var nums = startPosition.split(",");
-	var aBoard = board(nums);
-	drawBoard(aBoard);
+	theBoard = board(nums);
+	drawBoard(theBoard);
 }
 
 function drawBoard(aBoard){
@@ -36,8 +38,6 @@ function drawBoard(aBoard){
 			boardDiv.appendChild(cell);
 		}
 	}	
-	console.log("Value at 1,1 is " + aBoard.valueAt(1,1));
-	console.log("Blank is at " + aBoard.blankCoordinates());
 }
 
 function deleteBoard(){
@@ -68,12 +68,19 @@ function cellStyle(row, column, isBlank){
 }
 
 function doMoves(){
-	console.log("Going to do some moving!");
-	var blank = document.getElementById("cell_blank");
-	console.log("Found the blank " + blank);
-
+	//console.log("Going to do some moving!");
+	//var blank = document.getElementById("cell_blank");
+	//console.log("Found the blank " + blank);
+	//var blankAt = theBoard.blankCoordinates();
+	//console.log("The blank is now at " + blankAt.row + "," + blankAt.column);
+	//var valueAbove = theBoard.aboveBlank();
+	//console.log("Above the blank is " + valueAbove);
+	//var aboveCell = document.getElementById("cell_" + valueAbove);
+	//console.log("Above cell is " + aboveCell);
+	var swapValue = theBoard.aboveBlank();
+	theBoard.swap(swapValue);
+	drawBoard(theBoard);
 }
-
 
 var board = function(nums) {
 	var that = {};
@@ -110,6 +117,25 @@ var board = function(nums) {
 			column : myColumn
 		};
 		return coordinates;
+	}
+
+	that.aboveBlank = function(){
+		var blankSpot = that.blankCoordinates();
+		return that.valueAt(blankSpot.row - 1, blankSpot.column);
+	}
+
+	that.swap = function(num){
+		var newOrder = [];
+		for(var idx=0; idx<nums.length; idx++){
+			if(nums[idx] == num){
+				newOrder[idx] = nums.length;
+			} else if (nums[idx]==nums.length){
+				newOrder[idx] = num;
+			} else {
+				newOrder[idx] = nums[idx];
+			}
+		}
+		nums = newOrder;
 	}
 
 	return that;
