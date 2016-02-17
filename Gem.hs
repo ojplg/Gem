@@ -234,13 +234,12 @@ cycle_n_bottom_rows_counterclockwise n b = replicate n Lft ++ [Up] ++ replicate 
 cycle_bottom_rows_counterclockwise :: Action
 cycle_bottom_rows_counterclockwise b = replicate (dim b - 1) Lft ++ [Up] ++ replicate (dim b - 1) Rt ++ [Dn]
 
-
 next_to_last_row_tiles :: Board -> [Int]
 next_to_last_row_tiles b = [size b - 2 * dim b + 1 .. size b - dim b]
 
 solve_front_next_to_last_row :: Action
 solve_front_next_to_last_row b = (prep_next_to_last_row +> foldr (+>) empty_action (map place_in_next_to_last_row ns)) b
-  where ns = take 2 $ next_to_last_row_tiles b
+  where ns = take (dim b - 1) $ next_to_last_row_tiles b
 
 prep_next_to_last_row :: Action
 prep_next_to_last_row = blank_to_last_column +> to_action [Dn]
@@ -252,7 +251,7 @@ place_in_next_to_last_row n b | col b n >= g = cycle_until_placed n b
 
 place_from_left_and_below :: Strategy
 place_from_left_and_below n b = (cycle_until_past_predecessor n +> move_blank_above_target n +> to_action [Dn] +> 
-                                  blank_to_corner +> cycle_until_restored n +> correct_interloper n) b
+                                  blank_to_corner +> cycle_until_restored n +> correct_interloper n +> blank_to_corner) b
 
 cycle_until_correct_column :: Strategy
 cycle_until_correct_column n b | in_correct_column b n = []
@@ -264,7 +263,7 @@ cycle_until_past_predecessor n b | col b n > col b (n-1) = []
 
 correct_interloper :: Strategy
 correct_interloper n b | in_place b (n-1) = []
-                       | otherwise        = Up :replicate m Lft ++ [Dn] ++ replicate p Rt ++ [Up,Rt,Dn] ++ (blank_to_corner b)
+                       | otherwise        = Up :replicate m Lft ++ [Dn] ++ replicate p Rt ++ [Up,Rt,Dn]
   where m = dim b - 1
         p = goal_column b n
 
@@ -277,7 +276,7 @@ cycle_until_restored n b | in_correct_column b n = []
                          | otherwise             = (cycle_bottom_rows_clockwise +> cycle_until_restored n) b
 
 cycle_bottom_rows_clockwise :: Action
-cycle_bottom_rows_clockwise b = replicate m Rt ++ [Up] ++ replicate m Lft ++ [Dn]
+cycle_bottom_rows_clockwise b = [Up] ++ replicate m Lft ++ [Dn] ++ replicate m Rt
   where m = dim b - 1
 
 blank_to_corner :: Action
@@ -331,6 +330,7 @@ g10 = puzzle 10
 g11 = puzzle 11
 g12 = puzzle 12
 g19 = puzzle 19
+g20 = puzzle 20
 g24 = puzzle 24
 h1 = puzzle $ -1
 h2 = puzzle $ -2
@@ -352,6 +352,33 @@ p6 = do_action g6 solve_top_rows
 p7 = do_action g7 solve_top_rows
 p8 = do_action g8 solve_top_rows
 p9 = do_action g9 solve_top_rows
+p11 = do_action g11 solve_top_rows
+p20 = do_action g20 solve_top_rows
+
+a7 = do_action h7 solve_top_rows
+b7 = do_action a7 prep_next_to_last_row
+c7 = do_action b7 (place_in_next_to_last_row 16)
+d7 = do_action c7 (place_in_next_to_last_row 17)
+
+a20 = do_action g20 solve_top_rows
+b20 = do_action a20 prep_next_to_last_row
+c20 = do_action b20 (place_in_next_to_last_row 16)
+d20 = do_action c20 (place_in_next_to_last_row 17)
+e20 = do_action d20 (place_in_next_to_last_row 18)
+f20 = do_action e20 (place_in_next_to_last_row 19)
+
+b11 = do_action p11 prep_next_to_last_row
+c11 = do_action b11 (place_in_next_to_last_row 16)
+d11 = do_action c11 (place_in_next_to_last_row 17)
+e11 = do_action d11 (place_in_next_to_last_row 18)
+e11' = do_action e11 (cycle_until_past_predecessor 19)
+e11'' = do_action e11' (move_blank_above_target 19 +> to_action [Dn])
+e11''' = do_action e11'' blank_to_corner
+e11'''' = do_action e11''' (cycle_until_restored 19)
+e11''''' = do_action e11''' (correct_interloper 19)
+
+
+f11 = do_action e11 (place_in_next_to_last_row 19)
 
 p6' = do_action p6 prep_next_to_last_row
 p6'' = do_action p6' (place_in_next_to_last_row 4)

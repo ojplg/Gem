@@ -67,7 +67,7 @@ function cellStyle(row, column, isBlank){
 var remainingMoveList;
 
 function doMoves(){
-	var moveListString = document.getElementById("moves").value;
+	var moveListString = document.getElementById("moves").value.replace(/\s/g, '');
 	console.log("Doing move list " + moveListString);
 	var moveList = moveListString.split(",");
 	var numberMoves = moveList.length;
