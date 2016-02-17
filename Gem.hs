@@ -283,17 +283,6 @@ blank_to_corner :: Action
 blank_to_corner b = replicate m Rt
   where m = dim b - blank_col b - 1
 
-special_maneuver' :: Strategy
-special_maneuver' n b = replicate (d-1) Lft ++ [Up,Rt,Dn,Rt,Up,Lft,Lft,Dn,Rt,Up,Rt,Dn] ++ replicate (d-c-2) Rt 
-  where d = dim b
-        c = col b n
-
-special_maneuver :: Strategy
-special_maneuver n b = replicate (d-1) Lft ++ [Up,Rt,Dn,Rt,Up,Lft,Lft,Dn,Rt,Up,Rt,Dn] ++ replicate (d-c-2) Rt 
-  where d = dim b
-        c = col b n
-
-
 cycle_until_placed :: Strategy
 cycle_until_placed n b | in_place b n = []
                        | otherwise    = (cycle_n_bottom_rows_counterclockwise g +> cycle_until_placed n) b
