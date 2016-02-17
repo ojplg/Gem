@@ -60,7 +60,7 @@ function cellStyle(row, column, isBlank){
 	cellstyle += "margin: 5px;";
 	cellstyle += "font-size: 250%;";
 	cellstyle += "left: " + column * 55 + "px;";
-	cellstyle += "top: " + (150 + row * 55) + "px;";
+	cellstyle += "top: " + (250 + row * 55) + "px;";
 	return cellstyle;		
 }
 
@@ -75,6 +75,7 @@ function doMoves(){
 
 	function step(timestamp){
 		var move = remainingMoveList.shift();
+		deleteBoard();
 		drawBoardMove(move);
 		if(remainingMoveList.length > 0){
 			window.requestAnimationFrame(step);

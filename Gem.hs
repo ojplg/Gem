@@ -110,43 +110,6 @@ puzzle seed = puzzle' seed (seed `mod` 3 + 3)
 puzzle' :: Int -> Int -> Board
 puzzle' seed dimen = moves [1..dimen^2] $ rands seed 1000
 
--- some games
-g0 = puzzle 0
-g1 = puzzle 1
-g2 = puzzle 2
-g3 = puzzle 3
-g4 = puzzle 4
-g5 = puzzle 5
-g6 = puzzle 6
-g7 = puzzle 7
-g8 = puzzle 8
-g9 = puzzle 9
-g10 = puzzle 10
-g11 = puzzle 11
-g12 = puzzle 12
-g19 = puzzle 19
-g24 = puzzle 24
-h1 = puzzle $ -1
-h2 = puzzle $ -2
-h3 = puzzle $ -3
-h4 = puzzle $ -4
-h5 = puzzle $ -5
-h6 = puzzle $ -6
-h7 = puzzle $ -7
-h8 = puzzle $ -8
-h9 = puzzle $ -9
-
-p0 = do_action g0 solve_top_rows
-p1 = do_action g1 solve_top_rows
-p2 = do_action g2 solve_top_rows
-p3 = do_action g3 solve_top_rows
-p4 = do_action g4 solve_top_rows
-p5 = do_action g5 solve_top_rows
-p6 = do_action g6 solve_top_rows
-p7 = do_action g7 solve_top_rows
-p8 = do_action g8 solve_top_rows
-p9 = do_action g9 solve_top_rows
-
 -- solver helpers
 in_place :: Board -> Int -> Bool
 in_place b n = position b n == n - 1
@@ -265,8 +228,12 @@ solve_top_rows :: Action
 solve_top_rows b = foldr (+>) empty_action (map solve_row rs) b
   where rs = [0..dim b-3]
 
-cycle_n_bottom_rows :: Strategy
-cycle_n_bottom_rows n b = replicate n Lft ++ [Up] ++ replicate n Rt ++ [Dn]
+cycle_n_bottom_rows_counterclockwise :: Strategy
+cycle_n_bottom_rows_counterclockwise n b = replicate n Lft ++ [Up] ++ replicate n Rt ++ [Dn]
+
+cycle_bottom_rows_counterclockwise :: Action
+cycle_bottom_rows_counterclockwise b = replicate (dim b - 1) Lft ++ [Up] ++ replicate (dim b - 1) Rt ++ [Dn]
+
 
 next_to_last_row_tiles :: Board -> [Int]
 next_to_last_row_tiles b = [size b - 2 * dim b + 1 .. size b - dim b]
@@ -280,8 +247,42 @@ prep_next_to_last_row = blank_to_last_column +> to_action [Dn]
 
 place_in_next_to_last_row :: Strategy
 place_in_next_to_last_row n b | col b n >= g = cycle_until_placed n b
-                              | otherwise    = special_maneuver n b
+                              | otherwise    = place_from_left_and_below n b
   where g = goal_column b n
+
+place_from_left_and_below :: Strategy
+place_from_left_and_below n b = (cycle_until_past_predecessor n +> move_blank_above_target n +> to_action [Dn] +> 
+                                  blank_to_corner +> cycle_until_restored n +> correct_interloper n) b
+
+cycle_until_correct_column :: Strategy
+cycle_until_correct_column n b | in_correct_column b n = []
+                               | otherwise             = (cycle_bottom_rows_counterclockwise +> cycle_until_correct_column n) b
+
+cycle_until_past_predecessor :: Strategy 
+cycle_until_past_predecessor n b | col b n > col b (n-1) = []
+                                 | otherwise             = (cycle_bottom_rows_counterclockwise +> cycle_until_past_predecessor n) b
+
+correct_interloper :: Strategy
+correct_interloper n b | in_place b (n-1) = []
+                       | otherwise        = Up :replicate m Lft ++ [Dn] ++ replicate p Rt ++ [Up,Rt,Dn] ++ (blank_to_corner b)
+  where m = dim b - 1
+        p = goal_column b n
+
+move_blank_above_target :: Strategy
+move_blank_above_target n b = Up : replicate m Lft
+  where m = dim b - col b n - 1
+
+cycle_until_restored :: Strategy
+cycle_until_restored n b | in_correct_column b n = []
+                         | otherwise             = (cycle_bottom_rows_clockwise +> cycle_until_restored n) b
+
+cycle_bottom_rows_clockwise :: Action
+cycle_bottom_rows_clockwise b = replicate m Rt ++ [Up] ++ replicate m Lft ++ [Dn]
+  where m = dim b - 1
+
+blank_to_corner :: Action
+blank_to_corner b = replicate m Rt
+  where m = dim b - blank_col b - 1
 
 special_maneuver' :: Strategy
 special_maneuver' n b = replicate (d-1) Lft ++ [Up,Rt,Dn,Rt,Up,Lft,Lft,Dn,Rt,Up,Rt,Dn] ++ replicate (d-c-2) Rt 
@@ -293,24 +294,11 @@ special_maneuver n b = replicate (d-1) Lft ++ [Up,Rt,Dn,Rt,Up,Lft,Lft,Dn,Rt,Up,R
   where d = dim b
         c = col b n
 
-q0 = do_action p0 solve_front_next_to_last_row
-q1 = do_action p1 solve_front_next_to_last_row
-q2 = do_action p2 solve_front_next_to_last_row
-q3 = do_action p3 solve_front_next_to_last_row
-q4 = do_action p4 solve_front_next_to_last_row
-q5 = do_action p5 solve_front_next_to_last_row
-q6 = do_action p6 solve_front_next_to_last_row
-q7 = do_action p7 solve_front_next_to_last_row
-q8 = do_action p8 solve_front_next_to_last_row
-q9 = do_action p9 solve_front_next_to_last_row
 
 cycle_until_placed :: Strategy
 cycle_until_placed n b | in_place b n = []
-                       | otherwise    = (cycle_n_bottom_rows g +> cycle_until_placed n) b
+                       | otherwise    = (cycle_n_bottom_rows_counterclockwise g +> cycle_until_placed n) b
   where g = dim b - goal_column b n - 1
-
-fix_nine :: Action
-fix_nine b = (prep_next_to_last_row +> (place_in_next_to_last_row (size b - 2 * dim b + 1))) b
 
 shift_up :: [Move]
 shift_up = [Up,Rt,Dn,Lft,Up]
@@ -327,3 +315,56 @@ a1 +> a2 = \b -> let ma1 = a1 b in ma1 ++ a2 (moves b ma1)
 
 to_action :: [Move] -> Action
 to_action ms = \_ -> ms
+
+-- some games
+g0 = puzzle 0
+g1 = puzzle 1
+g2 = puzzle 2
+g3 = puzzle 3
+g4 = puzzle 4
+g5 = puzzle 5
+g6 = puzzle 6
+g7 = puzzle 7
+g8 = puzzle 8
+g9 = puzzle 9
+g10 = puzzle 10
+g11 = puzzle 11
+g12 = puzzle 12
+g19 = puzzle 19
+g24 = puzzle 24
+h1 = puzzle $ -1
+h2 = puzzle $ -2
+h3 = puzzle $ -3
+h4 = puzzle $ -4
+h5 = puzzle $ -5
+h6 = puzzle $ -6
+h7 = puzzle $ -7
+h8 = puzzle $ -8
+h9 = puzzle $ -9
+
+p0 = do_action g0 solve_top_rows
+p1 = do_action g1 solve_top_rows
+p2 = do_action g2 solve_top_rows
+p3 = do_action g3 solve_top_rows
+p4 = do_action g4 solve_top_rows
+p5 = do_action g5 solve_top_rows
+p6 = do_action g6 solve_top_rows
+p7 = do_action g7 solve_top_rows
+p8 = do_action g8 solve_top_rows
+p9 = do_action g9 solve_top_rows
+
+p6' = do_action p6 prep_next_to_last_row
+p6'' = do_action p6' (place_in_next_to_last_row 4)
+p6''' = do_action p6'' (place_in_next_to_last_row 5)
+
+q0 = do_action p0 solve_front_next_to_last_row
+q1 = do_action p1 solve_front_next_to_last_row
+q2 = do_action p2 solve_front_next_to_last_row
+q3 = do_action p3 solve_front_next_to_last_row
+q4 = do_action p4 solve_front_next_to_last_row
+q5 = do_action p5 solve_front_next_to_last_row
+q6 = do_action p6 solve_front_next_to_last_row
+q7 = do_action p7 solve_front_next_to_last_row
+q8 = do_action p8 solve_front_next_to_last_row
+q9 = do_action p9 solve_front_next_to_last_row
+
