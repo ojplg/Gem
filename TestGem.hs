@@ -108,3 +108,9 @@ test_solve_front_next_to_last_row x = all (in_place b') [1..t] && in_place b' (s
   where b = do_action (puzzle x) solve_top_rows
         b' = do_action b solve_front_next_to_last_row
         t = size b - dim b - 1
+
+test_solve_next_to_last_row x = all (in_place b') [1..t] && in_place b' (size b')
+  where b = do_action (puzzle x) solve_top_rows
+        b' = do_action b solve_next_to_last_row
+        t = size b - dim b
+

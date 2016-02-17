@@ -241,6 +241,19 @@ solve_front_next_to_last_row :: Action
 solve_front_next_to_last_row b = (prep_next_to_last_row +> foldr (+>) empty_action (map place_in_next_to_last_row ns)) b
   where ns = take (dim b - 1) $ next_to_last_row_tiles b
 
+solve_next_to_last_row :: Action
+solve_next_to_last_row = solve_front_next_to_last_row +> fix_last_in_second_to_last_row
+
+fix_last_in_second_to_last_row :: Action
+fix_last_in_second_to_last_row b | in_place b n = []
+                                 | otherwise    = (cycle_until_past_predecessor n +> 
+                                                    move_blank_above_target n +>
+                                                    to_action [Dn] +>
+                                                    blank_to_corner +>
+                                                    cycle_until_restored n +>
+                                                    correct_last_column_interloper) b
+  where n = length b - dim b
+
 prep_next_to_last_row :: Action
 prep_next_to_last_row = blank_to_last_column +> to_action [Dn]
 
@@ -263,9 +276,16 @@ cycle_until_past_predecessor n b | col b n > col b (n-1) = []
 
 correct_interloper :: Strategy
 correct_interloper n b | in_place b (n-1) = []
-                       | otherwise        = Up :replicate m Lft ++ [Dn] ++ replicate p Rt ++ [Up,Rt,Dn]
+                       | otherwise        = Up : replicate m Lft ++ [Dn] ++ replicate p Rt ++ [Up,Rt,Dn]
   where m = dim b - 1
         p = goal_column b n
+
+correct_last_column_interloper :: Action
+correct_last_column_interloper b | in_place b (n-1) = []
+                                 | otherwise        = Lft:Up:replicate (m+1) Lft ++ [Dn] 
+                                                        ++ replicate m Rt
+  where n = length b - dim b
+        m = dim b - 1
 
 move_blank_above_target :: Strategy
 move_blank_above_target n b = Up : replicate m Lft
@@ -343,3 +363,6 @@ p8 = do_action g8 $ solve_top_rows +> solve_front_next_to_last_row
 p9 = do_action g9 $ solve_top_rows +> solve_front_next_to_last_row
 p10 = do_action g10 $ solve_top_rows +> solve_front_next_to_last_row
 p11 = do_action g11 $ solve_top_rows +> solve_front_next_to_last_row
+
+q2 = do_action h2 $ solve_top_rows +> solve_front_next_to_last_row
+a2 = do_action q2 $ place_in_next_to_last_row 12
