@@ -331,56 +331,15 @@ h7 = puzzle $ -7
 h8 = puzzle $ -8
 h9 = puzzle $ -9
 
-p0 = do_action g0 solve_top_rows
-p1 = do_action g1 solve_top_rows
-p2 = do_action g2 solve_top_rows
-p3 = do_action g3 solve_top_rows
-p4 = do_action g4 solve_top_rows
-p5 = do_action g5 solve_top_rows
-p6 = do_action g6 solve_top_rows
-p7 = do_action g7 solve_top_rows
-p8 = do_action g8 solve_top_rows
-p9 = do_action g9 solve_top_rows
-p11 = do_action g11 solve_top_rows
-p20 = do_action g20 solve_top_rows
-
-a7 = do_action h7 solve_top_rows
-b7 = do_action a7 prep_next_to_last_row
-c7 = do_action b7 (place_in_next_to_last_row 16)
-d7 = do_action c7 (place_in_next_to_last_row 17)
-
-a20 = do_action g20 solve_top_rows
-b20 = do_action a20 prep_next_to_last_row
-c20 = do_action b20 (place_in_next_to_last_row 16)
-d20 = do_action c20 (place_in_next_to_last_row 17)
-e20 = do_action d20 (place_in_next_to_last_row 18)
-f20 = do_action e20 (place_in_next_to_last_row 19)
-
-b11 = do_action p11 prep_next_to_last_row
-c11 = do_action b11 (place_in_next_to_last_row 16)
-d11 = do_action c11 (place_in_next_to_last_row 17)
-e11 = do_action d11 (place_in_next_to_last_row 18)
-e11' = do_action e11 (cycle_until_past_predecessor 19)
-e11'' = do_action e11' (move_blank_above_target 19 +> to_action [Dn])
-e11''' = do_action e11'' blank_to_corner
-e11'''' = do_action e11''' (cycle_until_restored 19)
-e11''''' = do_action e11''' (correct_interloper 19)
-
-
-f11 = do_action e11 (place_in_next_to_last_row 19)
-
-p6' = do_action p6 prep_next_to_last_row
-p6'' = do_action p6' (place_in_next_to_last_row 4)
-p6''' = do_action p6'' (place_in_next_to_last_row 5)
-
-q0 = do_action p0 solve_front_next_to_last_row
-q1 = do_action p1 solve_front_next_to_last_row
-q2 = do_action p2 solve_front_next_to_last_row
-q3 = do_action p3 solve_front_next_to_last_row
-q4 = do_action p4 solve_front_next_to_last_row
-q5 = do_action p5 solve_front_next_to_last_row
-q6 = do_action p6 solve_front_next_to_last_row
-q7 = do_action p7 solve_front_next_to_last_row
-q8 = do_action p8 solve_front_next_to_last_row
-q9 = do_action p9 solve_front_next_to_last_row
-
+p0 = do_action g0 $ solve_top_rows +> solve_front_next_to_last_row
+p1 = do_action g1 $ solve_top_rows +> solve_front_next_to_last_row
+p2 = do_action g2 $ solve_top_rows +> solve_front_next_to_last_row
+p3 = do_action g3 $ solve_top_rows +> solve_front_next_to_last_row
+p4 = do_action g4 $ solve_top_rows +> solve_front_next_to_last_row
+p5 = do_action g5 $ solve_top_rows +> solve_front_next_to_last_row
+p6 = do_action g6 $ solve_top_rows +> solve_front_next_to_last_row
+p7 = do_action g7 $ solve_top_rows +> solve_front_next_to_last_row
+p8 = do_action g8 $ solve_top_rows +> solve_front_next_to_last_row
+p9 = do_action g9 $ solve_top_rows +> solve_front_next_to_last_row
+p10 = do_action g10 $ solve_top_rows +> solve_front_next_to_last_row
+p11 = do_action g11 $ solve_top_rows +> solve_front_next_to_last_row
