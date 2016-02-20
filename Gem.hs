@@ -325,22 +325,10 @@ permute_three_in_bottom_row = replicate_action 2 (cycle_n_bottom_rows_clockwise 
                                            +> to_action [Lft,Lft,Up,Rt,Rt,Rt,Dn]
                                            +> cycle_n_bottom_rows_counterclockwise 3
                                            
-
 fix_first_in_last_row :: Action
 fix_first_in_last_row b | in_place b n = []
                         | otherwise    = permute_three_in_bottom_row b
-  where n = size b - dim b
-
-blank_under_target :: Strategy
-blank_under_target n b = replicate m Lft
-  where m = blank_col b - col b n
-
-cycle_until_beyond_predecessor :: Strategy
-cycle_until_beyond_predecessor n b | col b n <= col b (n-1) = (cycle_bottom_rows_clockwise +> cycle_until_beyond_predecessor n) b
-                                   | otherwise              = []
-
-cycle_n_bottom_rows_counterclockwise_from_left :: Strategy
-cycle_n_bottom_rows_counterclockwise_from_left n b = Up : replicate n Rt ++ [Dn] ++ replicate n Lft
+  where n = size b - dim b + 1
 
 -- Solve the entire puzzle
 solve_puzzle :: Action
