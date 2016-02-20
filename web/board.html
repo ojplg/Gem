@@ -2,19 +2,23 @@
 
 <head>
 	<link rel="stylesheet" href="style.css" type="text/css">
-	<script src="gem.js">
-	</script>
+	<script src="gem.js"></script>
+	<script src="demos.js"></script>
 </head>
 
 <body>
+	<select id="demoSelect" onchange="onSelectChange();">
+		<option>1</option>
+		<option>2</option>
+	</select>
 	<textarea id="startPosition" rows="2" cols="50">
-16,1,18,5,2,25,22,4,11,23,24,15,20,14,10,13,6,7,12,8,21,19,9,17,3
 	</textarea>
+	<p id="demoDescription"></p>
 	<br/>
 	<button onClick="newBoard()">Draw Board</button>
 	<br/>
 	<textarea id="moves" rows="10" cols="100">
-Rt,Rt,Up,Lft,Dn,Rt,Rt,Up,Lft,Dn,Rt,Rt,Up,Lft,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Rt,Rt,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Rt,Dn,Dn,Dn,Dn,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Dn,Lft,Up,Rt,Dn,Dn,Lft,Up,Rt,Dn,Lft,Up,Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Lft,Lft,Dn,Rt,Dn,Dn,Lft,Dn,Rt,Rt,Up,Lft,Dn,Rt,Rt,Up,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Rt,Rt,Rt,Up,Lft,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Rt,Dn,Dn,Lft,Dn,Rt,Rt,Up,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Dn,Dn,Lft,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Dn,Lft,Lft,Lft,Dn,Rt,Rt,Up,Lft,Dn,Rt,Rt,Up,Lft,Up,Rt,Dn,Lft,Up,Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Lft,Lft,Dn,Rt,Rt,Rt,Dn,Lft,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Rt,Dn,Dn,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Dn,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Up,Rt,Dn,Lft,Up,Rt,Dn,Dn,Lft,Up,Rt,Dn,Lft,Up,Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Lft,Lft,Dn,Rt,Rt,Rt,Dn,Lft,Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Lft,Lft,Lft,Up,Rt,Rt,Rt,Rt,Dn,Up,Lft,Lft,Dn,Rt,Rt,Up,Lft,Lft,Lft,Lft,Dn,Rt,Rt,Up,Rt,Dn,Rt</textarea>
+	</textarea>
 	<br/>
 	<button onClick="doMoves()">Do Moves</button>
 	<br/>

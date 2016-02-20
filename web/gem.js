@@ -60,7 +60,7 @@ function cellStyle(row, column, isBlank){
 	cellstyle += "margin: 5px;";
 	cellstyle += "font-size: 250%;";
 	cellstyle += "left: " + column * 55 + "px;";
-	cellstyle += "top: " + (250 + row * 55) + "px;";
+	cellstyle += "top: " + (300 + row * 55) + "px;";
 	return cellstyle;		
 }
 
