@@ -232,11 +232,6 @@ solve_top_rows :: Action
 solve_top_rows b = foldr (+>) empty_action (map solve_row rs) b
   where rs = [0..dim b-3]
 
-cycle_n_bottom_rows_counterclockwise :: Strategy
-cycle_n_bottom_rows_counterclockwise n b = replicate n Lft ++ [Up] ++ replicate n Rt ++ [Dn]
-
-cycle_bottom_rows_counterclockwise :: Action
-cycle_bottom_rows_counterclockwise b = replicate (dim b - 1) Lft ++ [Up] ++ replicate (dim b - 1) Rt ++ [Dn]
 
 next_to_last_row_tiles :: Board -> [Int]
 next_to_last_row_tiles b = [size b - 2 * dim b + 1 .. size b - dim b]
@@ -300,9 +295,17 @@ cycle_counterclockwise_until_restored n b | in_correct_column b n = []
                                           | otherwise             = (cycle_bottom_rows_counterclockwise +> cycle_counterclockwise_until_restored n) b
 
 
+cycle_n_bottom_rows_clockwise :: Strategy
+cycle_n_bottom_rows_clockwise n _ = [Up] ++ replicate n Lft ++ [Dn] ++ replicate n Rt
+
 cycle_bottom_rows_clockwise :: Action
-cycle_bottom_rows_clockwise b = [Up] ++ replicate m Lft ++ [Dn] ++ replicate m Rt
-  where m = dim b - 1
+cycle_bottom_rows_clockwise b = cycle_n_bottom_rows_clockwise (dim b - 1) b
+
+cycle_n_bottom_rows_counterclockwise :: Strategy
+cycle_n_bottom_rows_counterclockwise n b = replicate n Lft ++ [Up] ++ replicate n Rt ++ [Dn]
+
+cycle_bottom_rows_counterclockwise :: Action
+cycle_bottom_rows_counterclockwise b = cycle_n_bottom_rows_counterclockwise (dim b - 1) b
 
 blank_to_corner :: Action
 blank_to_corner b = replicate m Rt
@@ -317,65 +320,16 @@ cycle_until_placed n b | in_place b n = []
 solve_last_row :: Action
 solve_last_row b = []
 
+permute_three_in_bottom_row :: Action
+permute_three_in_bottom_row = replicate_action 2 (cycle_n_bottom_rows_clockwise 3)
+                                           +> to_action [Lft,Lft,Up,Rt,Rt,Rt,Dn]
+                                           +> cycle_n_bottom_rows_counterclockwise 3
+                                           
+
 fix_first_in_last_row :: Action
 fix_first_in_last_row b | in_place b n = []
-                        | otherwise    = (replicate_action 2 cycle_bottom_rows_clockwise 
-                                           +> to_action (replicate (dim b - 2) Lft)
-                                           +> to_action (Up : replicate m Rt ++ [Dn])
-                                           +> replicate_action 2 cycle_bottom_rows_counterclockwise
-                                           +> fix_bottom_row_interloper) b
-  where n = size b - dim b + 1
-        m = dim b - 1
-
-fix_first_in_last_roj :: Action
-fix_first_in_last_roj b | in_place b n = []
-                        | otherwise    = (replicate_action m cycle_bottom_rows_clockwise 
-                                           +> to_action (replicate m Lft)
-                                           +> to_action [Up]
-                                           +> to_action (replicate m Rt)
-                                           +> to_action [Dn]
-                                           +> cycle_counterclockwise_until_restored p) b
-  where n = size b - dim b + 1
-        m = col b n
-        p = size b - dim b
-
-fix_first_in_last_rok :: Action
-fix_first_in_last_rok b | in_place b n = []
-                        | otherwise    = (to_action (Up : replicate m Lft ++ [Dn] ++ replicate m Rt)
-                                           +> cycle_bottom_rows_counterclockwise
-                                           +> to_action (replicate (c-1) Lft ++ [Up] ++ 
-                                                           replicate (c-1) Lft ++ [Dn] ++
-                                                           replicate (dim b - 1) Rt)) b
-  where n = size b - dim b + 1
-        c = col b n
-        m = dim b - c - 1
-
-{-- for q1 
-[Up,Lft,Dn,Lft,Up,Rt,Rt,Dn,Lft,Up,Lft,Dn,Lft,Up,Rt,Rt,Dn,Lft,Up,Lft,Dn,Rt,Rt,Rt]
---}
-
-
-fix_bottom_row_interloper :: Action
-fix_bottom_row_interloper b = interloper i b
-  where i = find_bottom_row_interloper b
-
-interloper :: Maybe Int -> Board -> [Move]
-interloper Nothing  _ = []
-interloper (Just n) b = replicate l Lft ++ [Up] ++ replicate c Lft ++ [Dn] ++ replicate (dim b - 1) Rt
-  where c = col b n
-        l = dim b - c - 1
-
-find_bottom_row_interloper :: Board -> Maybe Int
-find_bottom_row_interloper b = find (\a -> a > l) ns
-  where ns = map (\n -> value_at b n) [size b - 2 * dim b + 1 .. size b - dim b]
-        l = size b - dim b
-
-{--
-find :: (a -> a -> Bool) -> a -> [a] -> Maybe a
-find f _ []     = Nothing
-find f v (a:as) = if f v == a then Just a
-                    else find f v as
-                    --}
+                        | otherwise    = permute_three_in_bottom_row b
+  where n = size b - dim b
 
 blank_under_target :: Strategy
 blank_under_target n b = replicate m Lft
