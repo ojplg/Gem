@@ -2,6 +2,7 @@ module Main ( main ) where
 
 import TestGem
 import Gem
+import Gem.Board
 import Test.QuickCheck
 
 main :: IO ()

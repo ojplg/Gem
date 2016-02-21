@@ -1,6 +1,7 @@
 module TestGem where
 
 import Gem
+import Gem.Board
 import Test.QuickCheck
 
 prop_adds_right x = (sum $ start x) == 136
