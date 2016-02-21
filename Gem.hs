@@ -326,15 +326,6 @@ permute_three_in_bottom_row = replicate_action 2 (cycle_n_bottom_rows_clockwise 
                                            +> cycle_n_bottom_rows_counterclockwise 2
                                            +> cycle_n_bottom_rows_counterclockwise 3
                                            
-fix_first_in_last_row :: Action
-fix_first_in_last_row b | in_place b n = []
-                        | otherwise    = (to_action (replicate m Lft) 
-                                           +> permute_three_in_bottom_row 
-                                           +> to_action (replicate m Rt)
-                                           +> fix_first_in_last_row) b
-  where n = size b - dim b + 1
-        m = dim b - permutation_start n b - 1
-
 fix_in_last_row :: Strategy
 fix_in_last_row n b | in_place b n = []
                     | otherwise    = (to_action (replicate m Lft) 
