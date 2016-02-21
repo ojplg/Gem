@@ -10,7 +10,7 @@ type Strategy =  Int -> Action
 type Action = Board -> [Move]
 
 size :: Board -> Int
-size b = (dim b)^2
+size = length
 
 dim :: Board -> Int
 dim = round . sqrt . fromIntegral . length
@@ -109,7 +109,7 @@ start :: Int -> Board
 start seed = puzzle' seed 4
 
 puzzle :: Int -> Board
-puzzle seed = puzzle' seed (seed `mod` 4 + 3)
+puzzle seed = puzzle' seed (seed `mod` 8 + 3)
 
 puzzle' :: Int -> Int -> Board
 puzzle' seed dimen = moves [1..dimen^2] $ rands seed 1000
