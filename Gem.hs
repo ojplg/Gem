@@ -109,7 +109,7 @@ start :: Int -> Board
 start seed = puzzle' seed 4
 
 puzzle :: Int -> Board
-puzzle seed = puzzle' seed (seed `mod` 3 + 3)
+puzzle seed = puzzle' seed (seed `mod` 4 + 3)
 
 puzzle' :: Int -> Int -> Board
 puzzle' seed dimen = moves [1..dimen^2] $ rands seed 1000
@@ -318,7 +318,8 @@ cycle_until_placed n b | in_place b n = []
 
 -- Work on the final row
 solve_last_row :: Action
-solve_last_row b = []
+solve_last_row b = foldr (+>) empty_action (map fix_in_last_row ns) b
+  where ns = [size b - dim b + 1 .. size b - 2]
 
 permute_three_in_bottom_row :: Action
 permute_three_in_bottom_row = replicate_action 2 (cycle_n_bottom_rows_clockwise 3)
@@ -333,6 +334,15 @@ fix_first_in_last_row b | in_place b n = []
                                            +> fix_first_in_last_row) b
   where n = size b - dim b + 1
         m = dim b - permutation_start n b - 1
+
+fix_in_last_row :: Strategy
+fix_in_last_row n b | in_place b n = []
+                    | otherwise    = (to_action (replicate m Lft) 
+                                           +> permute_three_in_bottom_row 
+                                           +> to_action (replicate m Rt)
+                                           +> fix_in_last_row n) b
+  where m = dim b - permutation_start n b - 1
+
 
 permutation_start :: Int -> Board -> Int
 permutation_start n b | c - g < 3 = g + 3
