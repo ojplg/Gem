@@ -327,13 +327,19 @@ permute_three_in_bottom_row = replicate_action 2 (cycle_n_bottom_rows_clockwise 
                                            
 fix_first_in_last_row :: Action
 fix_first_in_last_row b | in_place b n = []
-                        | otherwise    = (position_blank 
+                        | otherwise    = (to_action (replicate m Lft) 
                                            +> permute_three_in_bottom_row 
-                                           +> fix_blank
+                                           +> to_action (replicate m Rt)
                                            +> fix_first_in_last_row) b
   where n = size b - dim b + 1
-        position_blank = to_action $ replicate (dim b - col b n - 3) Lft
-        fix_blank = to_action $ replicate (dim b - col b n - 3) Rt
+        m = dim b - permutation_start n b - 1
+
+permutation_start :: Int -> Board -> Int
+permutation_start n b | c - g < 3 = g + 3
+                      | otherwise = c + 1 
+  where g = goal_column b n
+        c = col b n
+
 
 -- Solve the entire puzzle
 solve_puzzle :: Action
