@@ -86,7 +86,9 @@ solve_row :: Strategy
 solve_row r = solve_row_front r +> to_action [Dn] +> fix_last_in_row r
 
 final_slide :: Action
-final_slide = to_action [Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Lft,Lft,Dn]
+--final_slide = to_action [Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Lft,Lft,Dn]
+final_slide = to_action [Lft,Up,Rt,Rt,Dn,Lft,Up,Lft,Dn]
+
 
 up_to_goal_row :: Strategy
 up_to_goal_row n b = (take (5*(row b n - goal_row b n)) $ cycle shift_up) 
@@ -145,7 +147,7 @@ correct_interloper n b | in_place b (n-1) = []
 
 correct_last_column_interloper :: Action
 correct_last_column_interloper b | in_place b (n-1) = []
-                                 | otherwise        = Lft:Up:replicate (m+1) Lft ++ [Dn] 
+                                 | otherwise        = Lft:Up:replicate (m-1) Lft ++ [Dn] 
                                                         ++ replicate m Rt
   where n = length b - dim b
         m = dim b - 1

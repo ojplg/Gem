@@ -54,17 +54,28 @@ no Lft b = blank b `elem` first_column b
 no Rt  b = blank b `elem` last_column b
 
 -- This moves the BLANK in the direction indicated
+sloppy_move :: Board -> Move -> Board
+sloppy_move b m | no m b    = b
+                | otherwise = move' b m
+
 move :: Board -> Move -> Board
-move b m | no m b    = b
+move b m | no m b    = error $  "Cannot make move " ++ show m ++ " on board " ++ show b
          | otherwise = move' b m
-  where move' b Up  = swap b (blank b) ((blank b)-dim b)
-        move' b Dn  = swap b (blank b) ((blank b)+dim b)
-        move' b Lft = swap b (blank b) ((blank b)-1)
-        move' b Rt  = swap b (blank b) ((blank b)+1)
-        swap board x y = map sub [0..size b-1]
-          where sub n | n == x    = board !! y
-                      | n == y    = board !! x
-                      | otherwise = board !! n
+
+move' :: Board -> Move -> Board
+move' b Up  = swap b (blank b) ((blank b)-dim b)
+move' b Dn  = swap b (blank b) ((blank b)+dim b)
+move' b Lft = swap b (blank b) ((blank b)-1)
+move' b Rt  = swap b (blank b) ((blank b)+1)
+        
+swap :: Board -> Int -> Int -> Board
+swap b x y = map sub [0..size b-1]
+  where sub n | n == x    = b !! y
+              | n == y    = b !! x
+              | otherwise = b !! n
+
+sloppy_moves :: Board -> [Move] -> Board
+sloppy_moves = foldl sloppy_move
 
 moves :: Board -> [Move] -> Board
 moves b ms = foldl move b ms
@@ -112,7 +123,7 @@ puzzle :: Int -> Board
 puzzle seed = puzzle' seed (seed `mod` 8 + 3)
 
 puzzle' :: Int -> Int -> Board
-puzzle' seed dimen = moves [1..dimen^2] $ rands seed 1000
+puzzle' seed dimen = sloppy_moves [1..dimen^2] $ rands seed 1000
 
 -- solver helpers
 in_place :: Board -> Int -> Bool
