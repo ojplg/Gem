@@ -22,8 +22,26 @@ var demos = [{
 	desc: "A* solution to 3x3 puzzle.",
 	start: "9,3,2,5,7,4,8,6,1",
 	moves: "Dn,Rt,Rt,Up,Lft,Dn,Rt,Dn,Lft,Lft,Up,Up,Rt,Dn,Rt,Up,Lft,Dn,Lft,Up,Rt,Rt,Dn,Dn"
+},
+{
+	desc: "By-row solution to 3x3 puzzle.",
+	start: "9,3,2,5,7,4,8,6,1",
+	moves: "Rt,Dn,Dn,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Dn,Rt,Rt,Up,Lft,Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Lft,Lft,Dn,Rt,Rt,Dn,Lft,Lft,Up,Rt,Rt,Dn,Lft,Lft,Up,Rt,Rt,Dn,Lft,Lft,Up,Rt,Rt,Dn,Lft,Lft,Up,Rt,Rt,Dn,Lft,Lft,Up,Rt,Rt,Dn,Up,Lft,Dn,Rt,Up,Lft,Lft,Dn,Rt,Rt"
 }
 ];
+
+function populateSelectOptions(){
+	console.log("populating select options")
+	var selectWidget = document.getElementById("demoSelect");
+	//selectWidget.add("");
+
+	for(var idx=1; idx<=demos.length; idx++){
+		console.log("adding " + idx);
+		var option = document.createElement("option");
+		option.text = "" + idx;
+		selectWidget.add(option);
+	}
+}
 
 function onSelectChange(){
 	var selectWidget = document.getElementById("demoSelect");
