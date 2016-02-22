@@ -21,16 +21,16 @@ blank_to_right n b | br == nr && bc >  nc = replicate (bc - nc - 1) Lft
          nc = col b n
 
 blank_to_left :: Strategy
-blank_to_left n b | br == nr && bc >  nc && br == dim b - 1 = Up : replicate (bc - nc + 1) Lft ++ [Dn]  -- h430
-                  | br == nr && bc >  nc = Dn : replicate (bc -nc + 1) Lft ++ [Up]  -- h84
-                  | br == nr && bc <  nc && br == dim b - 1 = Up : replicate (nc - bc - 1) Rt ++ [Dn]  -- works for g154
-                  | br == nr && bc <  nc = Dn : replicate (nc - bc - 1) Rt ++ [Up]  -- works for h2 
+blank_to_left n b | br == nr && bc >  nc && br == dim b - 1 = Up : replicate (bc - nc + 1) Lft ++ [Dn] 
+                  | br == nr && bc >  nc = Dn : replicate (bc -nc + 1) Lft ++ [Up] 
+                  | br == nr && bc <  nc && br == dim b - 1 = Up : replicate (nc - bc - 1) Rt ++ [Dn] 
+                  | br == nr && bc <  nc = Dn : replicate (nc - bc - 1) Rt ++ [Up] 
                   | br >  nr && bc >  nc = replicate (bc - nc + 1) Lft ++ replicate (br - nr) Up
-                  | br >  nr && bc == nc = Lft : replicate (br - nr + 0) Up  -- g12
+                  | br >  nr && bc == nc = Lft : replicate (br - nr + 0) Up 
                   | br >  nr && bc <  nc = replicate (nc - bc - 1) Rt ++ replicate (br - nr) Up
                   | br <  nr && bc == nc = Lft : replicate (nr - br + 0) Dn
-                  | br <  nr && bc <  nc = replicate (nc - bc - 1) Rt ++ replicate (nr - br) Dn -- works for g2
-                  | br <  nr && bc >  nc = replicate (bc - nc + 1) Lft ++ replicate (nr - br - 0) Dn  -- g5
+                  | br <  nr && bc <  nc = replicate (nc - bc - 1) Rt ++ replicate (nr - br) Dn 
+                  | br <  nr && bc >  nc = replicate (bc - nc + 1) Lft ++ replicate (nr - br - 0) Dn 
    where br = blank_row b
          bc = blank_col b
          nr = row b n
@@ -230,8 +230,6 @@ to_action ms = \_ -> ms
 empty_action :: Action
 empty_action = \_ -> []
 
-
--- some games
 g0 = puzzle 0
 g1 = puzzle 1
 g2 = puzzle 2
@@ -257,6 +255,7 @@ h6 = puzzle $ -6
 h7 = puzzle $ -7
 h8 = puzzle $ -8
 h9 = puzzle $ -9
+
 
 p0 = do_action g0 $ solve_top_rows +> solve_next_to_last_row
 p1 = do_action g1 $ solve_top_rows +> solve_next_to_last_row
