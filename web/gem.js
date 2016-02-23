@@ -47,9 +47,9 @@ function deleteBoard(){
 function cellStyle(row, column, isBlank){
 	var cellstyle = "font-family: sans-serif;"
 	if( isBlank ){
-		cellstyle += "background-color: blue;";
+		cellstyle += "background-color: green;";
 	} else {
-		cellstyle += "background-color: green;";		
+		cellstyle += "background-color: blue;";		
 	}
 	cellstyle += "position:absolute;";
 	cellstyle += "height: 50px;";
