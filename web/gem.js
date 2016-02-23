@@ -52,10 +52,10 @@ function drawBoard(aBoard){
 		var cell = document.createElement("div");
 		if ( nums[idx] < nums.length ){
 			cell.innerText = nums[idx];
-			cell.style = cellStyle(row, col, false);
+			styleCell(cell, row, col, false);
 			cell.id = "cell_" + nums[idx];
 		} else {
-			cell.style = cellStyle(row, col, true);
+			styleCell(cell, row, col, true);
 			cell.id = "cell_blank";
 		}
 		boardDiv.appendChild(cell);
@@ -69,29 +69,27 @@ function deleteBoard(){
 	}
 }
 
-function baseCellStyle(){
-	var cellstyle = "font-family: sans-serif;"
-	cellstyle += "position:absolute;";
-	cellstyle += "height: 50px;";
-	cellstyle += "width: 50px;";
-	cellstyle += "text-align: center;";
-	cellstyle += "float: left;";
-	cellstyle += "border-radius: 3px;";		
-	cellstyle += "margin: 5px;";
-	cellstyle += "font-size: 250%;";
-	return cellstyle;	
+function styleCell(cell, row, column, isBlank){
+  constantStyle(cell);
+  if( isBlank ){
+    cell.style.background = "blue";
+  } else {
+    cell.style.background = "green";
+  }
+  cell.style.left = (column * cellsize) + "px";
+  cell.style.top = (cellVerticalOffset + row * cellsize) + "px";
 }
 
-function cellStyle(row, column, isBlank){
-	var cellstyle = baseCellStyle();
-	if( isBlank ){
-		cellstyle += "background-color: green;";
-	} else {
-		cellstyle += "background-color: blue;";		
-	}
-	cellstyle += "left: " + column * cellsize + "px;";
-	cellstyle += "top: " + (cellVerticalOffset + row * cellsize) + "px;";
-	return cellstyle;		
+function constantStyle(cell){
+  cell.style.height = "50px";
+  cell.style.width = "50px";
+  cell.style.cssFloat = "left";
+  cell.style.textAlign = "center";
+  cell.style.borderRadius = "3px";
+  cell.style.margin = "5px";
+  cell.style.fontSize = "250%";
+  cell.style.fontFamily = "sans-serif";
+  cell.style.position = "absolute";
 }
 
 function slidingCellStyle(row, column, oldRow, oldColumn, percent){
