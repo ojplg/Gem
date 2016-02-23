@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 function remove_haskell_object_files() {
   rm -f *.o
@@ -7,5 +7,6 @@ function remove_haskell_object_files() {
 
 remove_haskell_object_files
 rm -f TestMain
+rm -f AStarMain
 cd Gem
 remove_haskell_object_files

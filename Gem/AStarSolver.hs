@@ -10,6 +10,12 @@ metric :: Board -> Int
 metric b = foldr (\n t -> t + (if in_place b n then 0 else 1)) 0 b
   where l = size b
 
+complex_metric :: Board -> Int
+complex_metric b = foldr (\n t -> t + cmetric b n) 0 b
+
+cmetric :: Board -> Int -> Int
+cmetric b n = abs (col b n - goal_column b n) + abs (row b n - goal_row b n)
+
 solved :: Board -> Bool
 solved b = metric b == 0
 
@@ -28,7 +34,7 @@ maybe_insert (Just a) s = insert a s
 maybe_insert Nothing  s = s
 
 run_astar :: Board -> Maybe [Board]
-run_astar b = aStar neighbors distance metric solved b
+run_astar b = aStar neighbors distance complex_metric solved b
 
 find_move :: Board -> Board -> Maybe Move
 find_move x y | d == -3   = Just Dn
@@ -44,3 +50,4 @@ board_list_to_moves (b1:b2:bs) = find_move b1 b2 : board_list_to_moves (b2:bs)
 
 solve_puzzle_astar :: Board -> [Move]
 solve_puzzle_astar b = map fromJust $ board_list_to_moves $ b:(fromJust $ run_astar b)
+
