@@ -31,12 +31,9 @@ var demos = [{
 ];
 
 function populateSelectOptions(){
-	console.log("populating select options")
 	var selectWidget = document.getElementById("demoSelect");
-	//selectWidget.add("");
 
 	for(var idx=1; idx<=demos.length; idx++){
-		console.log("adding " + idx);
 		var option = document.createElement("option");
 		option.text = "" + idx;
 		selectWidget.add(option);
