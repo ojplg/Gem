@@ -8,5 +8,6 @@ function remove_haskell_object_files() {
 remove_haskell_object_files
 rm -f TestMain
 rm -f AStarMain
+rm -f RowSolverMain
 cd Gem
 remove_haskell_object_files
