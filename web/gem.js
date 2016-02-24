@@ -17,11 +17,11 @@ function drawBoardMidSlide(aBoard,percent){
 
 	var nums = aBoard.numbers();
 	var dim = aBoard.dimension();
-  var movingNumber = aBoard.lastMovedValue();
-  var fromCoordinates = aBoard.lastMovedCoordinates();
+  	var movingNumber = aBoard.lastMovedValue();
+  	var fromCoordinates = aBoard.lastMovedCoordinates();
    
-  console.log("Doing mid slide draw:" + movingNumber + "; percent:" + percent);
-  console.log("From coordinates " + fromCoordinates.row + ", " + fromCoordinates.column);
+  	//console.log("Doing mid slide draw:" + movingNumber + "; percent:" + percent);
+  	//console.log("From coordinates " + fromCoordinates.row + ", " + fromCoordinates.column);
 
 	for(var idx=0; idx<nums.length; idx++){
 		var row = Math.floor(idx/dim);
@@ -30,9 +30,9 @@ function drawBoardMidSlide(aBoard,percent){
 		var cell = document.createElement("div");
 		if( nums[idx] == movingNumber ) {
 			cell.innerText = nums[idx];
-      slidingCellStyle(cell, row, col, fromCoordinates.row, fromCoordinates.column, percent);
-      cell.id = "cell_" + nums[idx];
-    } else if ( nums[idx] < nums.length ){
+      		slidingCellStyle(cell, row, col, fromCoordinates.row, fromCoordinates.column, percent);
+      		cell.id = "cell_" + nums[idx];
+    	} else if ( nums[idx] < nums.length ){
 			cell.innerText = nums[idx];
 			styleCell(cell, row, col, false);
 			cell.id = "cell_" + nums[idx];
@@ -97,25 +97,25 @@ function constantStyle(cell){
 }
 
 function slidingCellStyle(cell, row, column, oldRow, oldColumn, percent){
-  constantStyle(cell);
-  console.log("  moving rows " + oldRow + " to " + row);
-  console.log("  moving columns " + oldColumn + " to " + column);
-  cell.style.background = "green";
-	var colAdjust = computeAdjustment(column, oldColumn, percent);
-	var rowAdjust = computeAdjustment(row, oldRow, percent);
-  var newLeft = column * cellsize + colAdjust * cellsize /100;
-  var newTop = cellVerticalOffset + row * cellsize + rowAdjust * cellsize/100;
-  console.log("   At percent " + percent + " newLeft is " + newLeft + " new top is " + newTop);
-	cell.style.left = newLeft + "px;"
-	cell.style.top = newTop +  "px;"
+  	constantStyle(cell);
+  	//console.log("  moving rows " + oldRow + " to " + row);
+  	//console.log("  moving columns " + oldColumn + " to " + column);
+  	cell.style.background = "green";
+	var colAdjust = computeAdjustment(column, oldColumn, 100 - percent);
+	var rowAdjust = computeAdjustment(row, oldRow, 100-percent);
+  	var newLeft = column * cellsize + colAdjust * cellsize /100;
+  	var newTop = cellVerticalOffset + row * cellsize + rowAdjust * cellsize/100;
+  	console.log("   At percent " + percent + " newLeft is " + newLeft + " new top is " + newTop);
+	cell.style.left = newLeft + "px"
+	cell.style.top = newTop +  "px"
 }
 
 function computeAdjustment(index, oldIndex, percent){
 	var adjust = 0;
 	if( index < oldIndex ){
-		adjust = -percent;
-	} else if ( index > oldIndex){
 		adjust = percent;
+	} else if ( index > oldIndex){
+		adjust = -percent;
 	}
 	return adjust;
 }
@@ -154,34 +154,51 @@ function doMoves(){
 	var numberMoves = moveList.length;
 	var remainingMoveList = moveList;
 
-  var totalmoves = moveList.length;
-  var moveCount = 0;
-  var percent = 0; 
+    var totalmoves = moveList.length;
+  	var moveCount = 0;
+
+  	var start = null;
+  	var percent = 0; 
 
 	function step(timestamp){
-    console.log("Doing move " + moveCount + " of " + totalmoves + " at percent " + percent);
+		if( ! start ) { start = timestamp; }
+		console.log("Doing move " + moveCount + " of " + totalmoves + " at percent " + percent);
     
-    deleteBoard();
-    if( percent == 0 ){
-      var move = moveList[moveCount];
-      doMove(move);
-      console.log("Grabbed move " + move);
-    } 
-    if( percent < 100 ){
-      drawBoardMidSlide(theBoard,percent);
-      percent += 25;     
-    } 
-		if(percent <= 100 && moveCount < totalmoves){
-      console.log("ANIMATING: " + moveCount + ", " + percent);
-			window.requestAnimationFrame(step);
-		} 
-    if ( percent == 100 ) {
-      percent = 0;
-      moveCount++;
-      console.log("incremented moveCount to " + moveCount );
-    }
+    	var stillMoves = true;
+
+    	if( percent == 0 ){
+      		var move = moveList[moveCount];
+      		if (move != null){
+        		doMove(move);
+  	  		} else {
+  	  			stillMoves = false;
+  	  		}
+      		console.log("Grabbed move " + move);
+    	}
+    	if( stillMoves ){
+	    	if( percent < 100 ){
+		    	deleteBoard();
+	     	 	drawBoardMidSlide(theBoard,percent);
+	      		percent += 5;    
+	    	} 
+			if(percent <= 100 && moveCount < totalmoves){
+	      		console.log("ANIMATING: " + moveCount + ", " + percent + " at " + new Date().getTime());
+	      		window.setTimeout(
+		  			function() { window.requestAnimationFrame(step); },
+		  			25
+		  		);
+			} 
+	    	if ( percent == 100 ) {
+	    		deleteBoard();
+	    		drawBoard(theBoard);
+	      		percent = 0;
+	      		moveCount++;
+	      		console.log("incremented moveCount to " + moveCount );
+	    	}
+    	}
 	}
 	window.requestAnimationFrame(step);
+	//drawBoard(theBoard);
 }
 
 function doMove(move){
