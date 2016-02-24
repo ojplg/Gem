@@ -10,30 +10,34 @@ function newBoard(){
 	drawBoard(theBoard);
 }
 
-function drawBoardOld(aBoard){
-
-	var dim = aBoard.dimension();
-
+function drawBoardMidSlide(aBoard,percent){
 	var boardDiv = document.createElement("div");
 	boardDiv.id = "board";
 	document.body.appendChild(boardDiv);
 
 	var nums = aBoard.numbers();
+	var dim = aBoard.dimension();
+  var movingNumber = aBoard.lastMovedValue();
+  var fromCoordinates = aBoard.lastMovedCoordinates();
+   
+  console.log("Doing mid slide draw:" + movingNumber + "; percent:" + percent);
+  console.log("From coordinates " + fromCoordinates.row + ", " + fromCoordinates.column);
 
-	for(var idx=0 ; idx<dim; idx++){
-		for(var jdx=0; jdx<dim; jdx++){
-			var index = idx * dim + jdx;
-			var cell = document.createElement("div");
-			if ( nums[index] < nums.length ){
-				cell.innerText = nums[index];
-				cell.style = cellStyle(idx, jdx, false);
-				cell.id = "cell_" + nums[index];
-			} else {
-				cell.style = cellStyle(idx, jdx, true);
-				cell.id = "cell_blank";
-			}
-			boardDiv.appendChild(cell);
-		}
+	for(var idx=0; idx<nums.length; idx++){
+		var row = Math.floor(idx/dim);
+		var col = idx % dim;
+		var num = nums[idx];
+		var cell = document.createElement("div");
+		if( nums[idx] == movingNumber ) {
+			cell.innerText = nums[idx];
+      slidingCellStyle(cell, row, col, fromCoordinates.row, fromCoordinates.column, percent);
+      cell.id = "cell_" + nums[idx];
+    } else if ( nums[idx] < nums.length ){
+			cell.innerText = nums[idx];
+			styleCell(cell, row, col, false);
+			cell.id = "cell_" + nums[idx];
+		} 
+		boardDiv.appendChild(cell);
 	}	
 }
 
@@ -92,22 +96,26 @@ function constantStyle(cell){
   cell.style.position = "absolute";
 }
 
-function slidingCellStyle(row, column, oldRow, oldColumn, percent){
-	var cellstyle = baseCellStyle();
-	cellstyle += "background-color: green;";
+function slidingCellStyle(cell, row, column, oldRow, oldColumn, percent){
+  constantStyle(cell);
+  console.log("  moving rows " + oldRow + " to " + row);
+  console.log("  moving columns " + oldColumn + " to " + column);
+  cell.style.background = "green";
 	var colAdjust = computeAdjustment(column, oldColumn, percent);
 	var rowAdjust = computeAdjustment(row, oldRow, percent);
-	cellstyle += "left: " + (column * cellsize + colAdjust * cellsize) +  "px;"
-	cellstyle += "top: " + (column * cellsize + rowAdjust * cellsize) +  "px;"
-	return cellstyle;
+  var newLeft = column * cellsize + colAdjust * cellsize /100;
+  var newTop = cellVerticalOffset + row * cellsize + rowAdjust * cellsize/100;
+  console.log("   At percent " + percent + " newLeft is " + newLeft + " new top is " + newTop);
+	cell.style.left = newLeft + "px;"
+	cell.style.top = newTop +  "px;"
 }
 
 function computeAdjustment(index, oldIndex, percent){
 	var adjust = 0;
 	if( index < oldIndex ){
-		adjust = percent;
-	} else if ( index > oldIndex){
 		adjust = -percent;
+	} else if ( index > oldIndex){
+		adjust = percent;
 	}
 	return adjust;
 }
@@ -117,14 +125,18 @@ var cellVerticalOffset = 300;
 
 var remainingMoveList;
 
-function doMoves(){
+function doMovesFast(){
 	var moveListString = document.getElementById("moves").value.replace(/\s/g, '');
 	console.log("Doing move list " + moveListString);
 	var moveList = moveListString.split(",");
 	var numberMoves = moveList.length;
 	var remainingMoveList = moveList;
 
+  var totalmoves = moveList.length;
+  var moveCount = 0;
+
 	function step(timestamp){
+    console.log("Doing move " + moveCount + " of " + totalmoves);
 		var move = remainingMoveList.shift();
 		deleteBoard();
 		drawBoardMove(move);
@@ -135,7 +147,44 @@ function doMoves(){
 	window.requestAnimationFrame(step);
 }
 
-function drawBoardMove(move){
+function doMoves(){
+	var moveListString = document.getElementById("moves").value.replace(/\s/g, '');
+	console.log("Doing move list " + moveListString);
+	var moveList = moveListString.split(",");
+	var numberMoves = moveList.length;
+	var remainingMoveList = moveList;
+
+  var totalmoves = moveList.length;
+  var moveCount = 0;
+  var percent = 0; 
+
+	function step(timestamp){
+    console.log("Doing move " + moveCount + " of " + totalmoves + " at percent " + percent);
+    
+    deleteBoard();
+    if( percent == 0 ){
+      var move = moveList[moveCount];
+      doMove(move);
+      console.log("Grabbed move " + move);
+    } 
+    if( percent < 100 ){
+      drawBoardMidSlide(theBoard,percent);
+      percent += 25;     
+    } 
+		if(percent <= 100 && moveCount < totalmoves){
+      console.log("ANIMATING: " + moveCount + ", " + percent);
+			window.requestAnimationFrame(step);
+		} 
+    if ( percent == 100 ) {
+      percent = 0;
+      moveCount++;
+      console.log("incremented moveCount to " + moveCount );
+    }
+	}
+	window.requestAnimationFrame(step);
+}
+
+function doMove(move){
 	switch(move){
 		case "Up": theBoard.up();
 		break;
@@ -146,7 +195,6 @@ function drawBoardMove(move){
 		case "Rt": theBoard.right();
 		break;
 	}	
-	drawBoard(theBoard);	
 }
 
 var board = function(nums) {
@@ -210,10 +258,30 @@ var board = function(nums) {
 		that.swap(that.valueAt(blankSpot.row + 1, blankSpot.column));		
 	}
 
+  that.lastMovedValue = function(){
+    return that.movedValue;
+  }
+ 
+  that.lastMovedPosition = function(){
+    return that.movedPosition;
+  }
+
+  that.lastMovedCoordinates = function() {
+    var oldRow = Math.floor(that.movedPosition/that.dimension());
+    var oldColumn = that.movedPosition%that.dimension();
+    var coordinates = {
+      row: oldRow,
+      column: oldColumn
+    }
+    return coordinates;
+  }
+
 	that.swap = function(num){
 		var newOrder = [];
+    that.movedValue = num;
 		for(var idx=0; idx<nums.length; idx++){
 			if(nums[idx] == num){
+        that.movedPosition = idx;
 				newOrder[idx] = nums.length;
 			} else if (nums[idx]==nums.length){
 				newOrder[idx] = num;

@@ -4,6 +4,11 @@ var demos = [{
 	moves : "Rt,Rt,Up,Lft,Dn,Rt,Rt,Up,Lft,Dn,Rt,Rt,Up,Lft,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Rt,Rt,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Rt,Dn,Dn,Dn,Dn,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Dn,Lft,Up,Rt,Dn,Dn,Lft,Up,Rt,Dn,Lft,Up,Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Lft,Lft,Dn,Rt,Dn,Dn,Lft,Dn,Rt,Rt,Up,Lft,Dn,Rt,Rt,Up,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Rt,Rt,Rt,Up,Lft,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Rt,Dn,Dn,Lft,Dn,Rt,Rt,Up,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Dn,Dn,Lft,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Dn,Lft,Lft,Lft,Dn,Rt,Rt,Up,Lft,Dn,Rt,Rt,Up,Lft,Up,Rt,Dn,Lft,Up,Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Lft,Lft,Dn,Rt,Rt,Rt,Dn,Lft,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Rt,Dn,Dn,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Dn,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Up,Rt,Dn,Lft,Up,Rt,Dn,Dn,Lft,Up,Rt,Dn,Lft,Up,Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Lft,Lft,Dn,Rt,Rt,Rt,Dn,Lft,Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Lft,Lft,Lft,Up,Rt,Rt,Rt,Rt,Dn,Up,Lft,Lft,Dn,Rt,Rt,Up,Lft,Lft,Lft,Lft,Dn,Rt,Rt,Up,Rt,Dn,Rt"
 },
 {
+	desc: "Small move slide",
+	start: "9,3,2,5,7,4,8,6,1",
+	moves: "Dn"
+},
+{
 	desc : "4x4 puzzle solved once the next to last row is done.",
 	start : "11,10,7,16,2,5,14,4,15,8,12,1,6,9,3,13",
 	moves : "Lft,Dn,Dn,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Rt,Dn,Lft,Dn,Rt,Rt,Up,Lft,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Rt,Dn,Dn,Dn,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Dn,Lft,Lft,Dn,Rt,Rt,Up,Lft,Up,Rt,Dn,Lft,Up,Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Lft,Lft,Dn,Dn,Rt,Rt,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Dn,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Rt,Dn,Dn,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Dn,Lft,Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Lft,Up,Rt,Rt,Dn,Lft,Lft,Up,Rt,Rt,Dn,Lft,Lft,Lft,Up,Rt,Rt,Rt,Dn,Up,Lft,Dn,Rt,Up,Lft,Lft,Lft,Dn,Rt,Rt,Rt"
