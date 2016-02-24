@@ -6,5 +6,7 @@ import Gem.AStarSolver
 
 main :: IO ()
 main = do
-  putStr $ show $ solve_puzzle_astar g1
+  putStr "Enter puzzle number"
+  arg <- getLine
+  putStr $ show $ solve_puzzle_astar $ puzzle $ read arg
   putStr "\n"

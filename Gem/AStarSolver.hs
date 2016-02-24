@@ -16,6 +16,12 @@ complex_metric b = foldr (\n t -> t + cmetric b n) 0 b
 cmetric :: Board -> Int -> Int
 cmetric b n = abs (col b n - goal_column b n) + abs (row b n - goal_row b n)
 
+one_metric :: Board -> Int
+one_metric b = cmetric b 1
+
+one_solved :: Board -> Bool
+one_solved b = one_metric b == 0
+
 solved :: Board -> Bool
 solved b = metric b == 0
 
@@ -34,7 +40,7 @@ maybe_insert (Just a) s = insert a s
 maybe_insert Nothing  s = s
 
 run_astar :: Board -> Maybe [Board]
-run_astar b = aStar neighbors distance complex_metric solved b
+run_astar b = aStar neighbors distance one_metric solved b
 
 find_move :: Board -> Board -> Maybe Move
 find_move x y | d == -3   = Just Dn
