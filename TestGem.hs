@@ -25,28 +25,9 @@ test_n_to_last_column x = position b' n `elem` last_column b &&
         b' = do_action b $ n_to_last_column n
         n  = valid_tile x
 
--- Make sure that
--- a) n is in the correct row
--- b) n is in the last column
--- c) the blank is to the right of the n tile
-test_n_to_row x = in_correct_row b' n &&
-                    in_last_column b' n &&
-                    blank b' == position b' n - 1
-  where b  = start x
-        b' = do_action b $ n_to_row n
-        n  = valid_top_tile x
-
 test_fix_five x = in_place b' 5
   where b  = start x
         b' = do_action (do_action b $ solve_row 0) $ n_to_place 5
-
--- Make sure that after calling this for the value 5
---  a) 5 is in the correct row
---  b) the top row is still good
-test_five_to_correct_row x = in_correct_row b' 5 &&
-                               row_done b' 0
-  where b  = do_action (start x) (solve_row 0)
-        b' = do_action b $ n_to_row 5
 
 row_done :: Board -> Int -> Bool
 row_done b n = all (\n -> in_place b n) $ row_places b n

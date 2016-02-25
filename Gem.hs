@@ -52,11 +52,8 @@ right_shift b n d = Lft : (take (5*count) $ cycle shift)
   where count = dim b - (col b n) - 2
         shift = [d,Rt,Rt,opposite d,Lft]
 
-n_to_row :: Strategy
-n_to_row n = n_to_last_column n +> up_to_goal_row n
-
 n_to_place :: Strategy
-n_to_place n = n_to_row n +> slide_left n
+n_to_place n = n_to_last_column n +> up_to_goal_row n +> slide_left n
 
 slide_left :: Strategy
 slide_left n b = Rt : (take (5*count) $ cycle slide)
