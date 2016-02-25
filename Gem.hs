@@ -37,16 +37,8 @@ blank_to_left n b | br == nr && bc >  nc && br == dim b - 1 = Up : replicate (bc
          nr = row b n
          nc = col b n
 
-blank_to_col :: Strategy
-blank_to_col i b | i >= blank_col b = replicate (i - blank_col b) Rt
-                 | otherwise        = replicate (blank_col b - i) Lft
-
 blank_to_last_column :: Action
-blank_to_last_column b = blank_to_col (dim b -1) b
-
-blank_to_row :: Strategy 
-blank_to_row i b | i >= blank_row b = replicate (i - blank_row b) Dn
-                 | otherwise        = replicate (blank_row b - i) Up
+blank_to_last_column b = replicate (dim b - blank_col b - 1) Rt
 
 n_to_last_column :: Strategy
 n_to_last_column n b | position b n `elem` last_column b = blank_to_left n b
