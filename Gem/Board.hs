@@ -78,7 +78,7 @@ sloppy_moves :: Board -> [Move] -> Board
 sloppy_moves = foldl sloppy_move
 
 moves :: Board -> [Move] -> Board
-moves b ms = foldl move b ms
+moves = foldl move
 
 row :: Board -> Int -> Int
 row b n = position b n `div` dim b

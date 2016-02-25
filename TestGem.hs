@@ -65,13 +65,6 @@ test_five_to_correct_row x = in_correct_row b' 5 &&
 row_done :: Board -> Int -> Bool
 row_done b n = all (\n -> in_place b n) $ row_places b n
 
-test_n_to_col x = in_correct_row b' n &&
-                    in_correct_column b' n &&
-                    blank b' == position b' n + 1
-  where b  = start x
-        b' = do_action b $ n_to_col n
-        n  = valid_top_tile x
-
 test_blank_to_left x = position b n `elem` first_column b || position b' n == blank b' + 1
   where b  = start x
         b' = do_action b $ blank_to_left n

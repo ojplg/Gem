@@ -5,6 +5,7 @@ import Data.Maybe
 import System.Random
 import Gem.Board
 
+-- Strategies to put the blank in position relative to any number
 blank_to_right :: Strategy
 blank_to_right n b | br == nr && bc >  nc = replicate (bc - nc - 1) Lft
                    | br == nr && bc <  nc &&  br == dim b - 1 = Up : replicate (nc - bc + 1) Rt ++ [Dn]
@@ -56,17 +57,14 @@ n_to_last_column n b | position b n `elem` last_column b = blank_to_left n b
 
 right_shift :: Board -> Int -> Move -> [Move]
 right_shift b n d = Lft : (take (5*count) $ cycle shift)
-   where count = dim b - (col b n) - 2
-         shift = [d,Rt,Rt,opposite d,Lft]
-
-n_to_place :: Strategy
-n_to_place = n_to_col
+  where count = dim b - (col b n) - 2
+        shift = [d,Rt,Rt,opposite d,Lft]
 
 n_to_row :: Strategy
 n_to_row n = n_to_last_column n +> up_to_goal_row n
 
-n_to_col :: Strategy
-n_to_col n = n_to_row n +> slide_left n
+n_to_place :: Strategy
+n_to_place n = n_to_row n +> slide_left n
 
 slide_left :: Strategy
 slide_left n b = Rt : (take (5*count) $ cycle slide)
@@ -86,9 +84,7 @@ solve_row :: Strategy
 solve_row r = solve_row_front r +> to_action [Dn] +> fix_last_in_row r
 
 final_slide :: Action
---final_slide = to_action [Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Lft,Lft,Dn]
 final_slide = to_action [Lft,Up,Rt,Rt,Dn,Lft,Up,Lft,Dn]
-
 
 up_to_goal_row :: Strategy
 up_to_goal_row n b = (take (5*(row b n - goal_row b n)) $ cycle shift_up) 
@@ -204,18 +200,15 @@ fix_in_last_row n b | in_place b n = []
                                            +> fix_in_last_row n) b
   where m = dim b - permutation_start n b - 1
 
-
 permutation_start :: Int -> Board -> Int
 permutation_start n b | c - g < 3 = g + 3
                       | otherwise = c + 1 
   where g = goal_column b n
         c = col b n
 
-
 -- Solve the entire puzzle
 solve_puzzle :: Action
 solve_puzzle = solve_top_rows +> solve_next_to_last_row +> solve_last_row
-
 
 do_action :: Board -> Action -> Board
 do_action b a = moves b (a b)
@@ -257,7 +250,6 @@ h6 = puzzle $ -6
 h7 = puzzle $ -7
 h8 = puzzle $ -8
 h9 = puzzle $ -9
-
 
 p0 = do_action g0 $ solve_top_rows +> solve_next_to_last_row
 p1 = do_action g1 $ solve_top_rows +> solve_next_to_last_row
