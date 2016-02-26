@@ -111,8 +111,8 @@ random_int_list :: Int -> StdGen -> [Int]
 random_int_list n = take n . unfoldr (Just . random)
 
 puzzle :: Int -> Board
-puzzle seed = puzzle' seed (seed `mod` 8 + 3)
-  where puzzle' seed dimen = sloppy_moves [1..dimen^2] $ random_moves 1000 seed
+puzzle seed = puzzle' seed (seed `mod` 4 + 3)
+  where puzzle' seed d = sloppy_moves [1..d^2] $ random_moves (50*d^2) seed
 
 -- solver helpers
 in_place :: Board -> Int -> Bool
