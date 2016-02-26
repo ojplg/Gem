@@ -200,7 +200,6 @@ correct_last_column_interloper b | in_place b (n-1) = []
 solve_next_to_last_row :: Action
 solve_next_to_last_row = solve_front_next_to_last_row +> fix_last_in_next_to_last_row
 
-
 -- Work on the final row
 solve_last_row :: Action
 solve_last_row b = foldr (+>) empty_action (map fix_in_last_row ns) b
