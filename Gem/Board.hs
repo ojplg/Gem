@@ -1,6 +1,7 @@
 module Gem.Board where
 
 import Data.List
+import Data.List.Split (chunksOf)
 import Data.Maybe
 import System.Random
 
@@ -16,17 +17,13 @@ dim :: Board -> Int
 dim = round . sqrt . fromIntegral . length
 
 -- Fuctions for display
-format :: Board -> Int -> String
-format b n | n==size b  = "   "
-           | n<10       = "  " ++ show n
-           | otherwise  = " " ++ show n
-
-break_lines :: Board -> [String] -> [String]
-break_lines b [] = []
-break_lines b ls = ((concat (take (dim b) ls)) ++ "\n") : break_lines b (drop (dim b) ls)
+format_tile :: Board -> Int -> String
+format_tile b n | n==size b  = "   "
+                | n<10       = "  " ++ show n
+                | otherwise  = " " ++ show n
 
 out :: Board -> IO ()
-out b = putStr $ concat $ (break_lines b $ map (format b) b) 
+out b = mapM_ putStrLn $ map concat $ chunksOf (dim b) $ map (format_tile b) b
 
 -- Edges
 top_row b = [0..dim b-1]
