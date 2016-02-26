@@ -25,12 +25,13 @@ break_lines :: Board -> [String] -> [String]
 break_lines b [] = []
 break_lines b ls = ((concat (take (dim b) ls)) ++ "\n") : break_lines b (drop (dim b) ls)
 
+out :: Board -> IO ()
 out b = putStr $ concat $ (break_lines b $ map (format b) b) 
 
 -- Edges
 top_row b = [0..dim b-1]
 bottom_row b = [size b-dim b .. size b-1]
-first_column b = [n * dim b| n <- [0..dim b-1]]
+first_column b = [n * dim b | n <- [0..dim b-1]]
 last_column b = [n * dim b - 1 | n <- [1..dim b]]
 
 row_places b r = [r*dim b+1..(r+1)*dim b]
@@ -97,8 +98,8 @@ value_at :: Board -> Int -> Int
 value_at b n = b !! (n-1)
 
 -- randomizer
-rands :: Int -> Int -> [Move]
-rands seed length = map to_move $ rand_int_list seed length
+random_moves :: Int -> Int -> [Move]
+random_moves length seed = map to_move $ random_int_list length $ mkStdGen seed
    
 to_move :: Int -> Move
 to_move i | i `mod` 4==0 = Up
@@ -106,24 +107,12 @@ to_move i | i `mod` 4==0 = Up
           | i `mod` 4==2 = Lft
           | otherwise    = Rt   
 
-rand_int_list :: Int -> Int -> [Int]
-rand_int_list seed length = map fst $ rand_list seed length
-
-build_rand_list :: Int -> [(Int, StdGen)] -> [(Int, StdGen)]
-build_rand_list 1 rs     = rs
-build_rand_list n (r:rs) = build_rand_list (n-1) ((next $ snd r):(r:rs))
-
-rand_list :: Int -> Int -> [(Int, StdGen)]
-rand_list seed length = build_rand_list length [next $ mkStdGen seed]
-
-start :: Int -> Board
-start seed = puzzle' seed 4
+random_int_list :: Int -> StdGen -> [Int]
+random_int_list n = take n . unfoldr (Just . random)
 
 puzzle :: Int -> Board
 puzzle seed = puzzle' seed (seed `mod` 8 + 3)
-
-puzzle' :: Int -> Int -> Board
-puzzle' seed dimen = sloppy_moves [1..dimen^2] $ rands seed 1000
+  where puzzle' seed dimen = sloppy_moves [1..dimen^2] $ random_moves 1000 seed
 
 -- solver helpers
 in_place :: Board -> Int -> Bool
