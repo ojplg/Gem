@@ -5,6 +5,25 @@ import Data.Maybe
 import System.Random
 import Gem.Board
 
+type Action = Board -> [Move]
+type Strategy =  Int -> Action
+
+-- Ways to apply and manipulate actions
+do_action :: Board -> Action -> Board
+do_action b a = moves b (a b)
+
+replicate_action :: Int -> Action -> Action
+replicate_action n a = foldr (+>) empty_action $ replicate n a
+
+(+>) :: Action -> Action -> Action
+a1 +> a2 = \b -> let ma1 = a1 b in ma1 ++ a2 (moves b ma1)
+
+to_action :: [Move] -> Action
+to_action ms = \_ -> ms
+
+empty_action :: Action
+empty_action = \_ -> []
+
 -- Strategies to put the blank in position relative to any number
 blank_to_right :: Strategy
 blank_to_right n b | br == nr && bc >  nc = replicate (bc - nc - 1) Lft
@@ -37,9 +56,8 @@ blank_to_left n b | br == nr && bc >  nc && br == dim b - 1 = Up : replicate (bc
          nr = row b n
          nc = col b n
 
-blank_to_last_column :: Action
-blank_to_last_column b = replicate (dim b - blank_col b - 1) Rt
-
+-- Fix the easy tiles (those not in the last column or in the last two rows)
+-- First move the target tile to the last column, leaving the blank on the left
 n_to_last_column :: Strategy
 n_to_last_column n b | position b n `elem` last_column b = blank_to_left n b
                      | position b n `elem` bottom_row b  = ms ++ right_shift b' n Up
@@ -58,17 +76,27 @@ opposite Dn = Up
 opposite Lft = Rt
 opposite Rt = Lft
 
-n_to_place :: Strategy
-n_to_place n = n_to_last_column n +> up_to_goal_row n +> slide_left n
+-- Slide the target tile up to its goal row
+n_to_goal_row :: Strategy
+n_to_goal_row n b = (take (5*(row b n - goal_row b n)) $ cycle shift_up) 
 
-slide_left :: Strategy
-slide_left n b = Rt : (take (5*count) $ cycle slide)
+shift_up :: [Move]
+shift_up = [Up,Rt,Dn,Lft,Up]
+
+-- Slide the target tile left to its goal column
+n_to_goal_column :: Strategy
+n_to_goal_column n b = Rt : (take (5*count) $ cycle slide)
   where slide = [Dn,Lft,Lft,Up,Rt]
         count = col b n - (n `mod` dim b) 
 
-solve_row_front :: Strategy
-solve_row_front r b = foldr (+>) empty_action (map (\n -> n_to_place n) ps) b
-  where ps = take (dim b-1) $ row_places b r
+fix_easy_tile :: Strategy
+fix_easy_tile n = n_to_last_column n +> n_to_goal_row n +> n_to_goal_column n
+
+solve_easy_row_front :: Strategy
+solve_easy_row_front r b = foldr (+>) empty_action (map fix_easy_tile ns) $ b
+--  where ps = take (dim b-1) $ row_places b r
+    where ns = [r*dim b+1..(r+1)*dim b-1]
+
 
 row_places b r = [r*dim b+1..(r+1)*dim b]
 
@@ -81,19 +109,15 @@ fix_last_in_row r b | in_place b n = []
   where n = dim b * (r+1)
 
 solve_row :: Strategy
-solve_row r = solve_row_front r +> to_action [Dn] +> fix_last_in_row r
+solve_row r = solve_easy_row_front r +> to_action [Dn] +> fix_last_in_row r
 
 final_slide :: Action
 final_slide = to_action [Lft,Up,Rt,Rt,Dn,Lft,Up,Lft,Dn]
 
-up_to_goal_row :: Strategy
-up_to_goal_row n b = (take (5*(row b n - goal_row b n)) $ cycle shift_up) 
 
 up_to_below_goal_row :: Strategy
 up_to_below_goal_row n b = (take (5*(row b n - goal_row b n - 1)) $ cycle shift_up) 
 
-shift_up :: [Move]
-shift_up = [Up,Rt,Dn,Lft,Up]
 
 solve_top_rows :: Action
 solve_top_rows b = foldr (+>) empty_action (map solve_row rs) b
@@ -120,7 +144,7 @@ fix_last_in_second_to_last_row b | in_place b n = []
   where n = length b - dim b
 
 prep_next_to_last_row :: Action
-prep_next_to_last_row = blank_to_last_column +> to_action [Dn]
+prep_next_to_last_row b = replicate (dim b - blank_col b - 1) Rt ++ [Dn]
 
 place_in_next_to_last_row :: Strategy
 place_in_next_to_last_row n b | col b n >= g = cycle_until_placed n b
@@ -209,21 +233,6 @@ permutation_start n b | c - g < 3 = g + 3
 -- Solve the entire puzzle
 solve_puzzle :: Action
 solve_puzzle = solve_top_rows +> solve_next_to_last_row +> solve_last_row
-
-do_action :: Board -> Action -> Board
-do_action b a = moves b (a b)
-
-replicate_action :: Int -> Action -> Action
-replicate_action n a = foldr (+>) empty_action $ replicate n a
-
-(+>) :: Action -> Action -> Action
-a1 +> a2 = \b -> let ma1 = a1 b in ma1 ++ a2 (moves b ma1)
-
-to_action :: [Move] -> Action
-to_action ms = \_ -> ms
-
-empty_action :: Action
-empty_action = \_ -> []
 
 g0 = puzzle 0
 g1 = puzzle 1

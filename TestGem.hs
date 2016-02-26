@@ -25,10 +25,6 @@ test_n_to_last_column x = position b' n `elem` last_column b &&
         b' = do_action b $ n_to_last_column n
         n  = valid_tile b x
 
-test_fix_five x = in_place b' 5
-  where b  = puzzle x
-        b' = do_action (do_action b $ solve_row 0) $ n_to_place 5
-
 row_done :: Board -> Int -> Bool
 row_done b n = all (\n -> in_place b n) $ row_places b n
 
@@ -37,15 +33,15 @@ test_blank_to_left x = position b n `elem` first_column b || position b' n == bl
         b' = do_action b $ blank_to_left n
         n = valid_tile b x
 
-test_n_to_place x = in_place b' n
+test_fix_easy_tile x = in_place b' n
                       && blank b' == position b' n + 1
   where b = puzzle x
-        b' = do_action b $ n_to_place n
+        b' = do_action b $ fix_easy_tile n
         n = valid_top_tile b x
 
-test_solve_row_front x = all (in_place b') [1..(dim b -1)]
+test_solve_easy_row_front x = all (in_place b') [1..(dim b -1)]
   where b = puzzle x
-        b' = do_action b $ solve_row_front 0
+        b' = do_action b $ solve_easy_row_front 0
 
 test_finish_top_row x = all (in_place b') ps
   where b = puzzle x

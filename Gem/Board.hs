@@ -7,8 +7,6 @@ import System.Random
 
 type Board = [Int]
 data Move = Up | Dn | Lft | Rt deriving (Eq,Show)
-type Strategy =  Int -> Action
-type Action = Board -> [Move]
 
 size :: Board -> Int
 size = length
