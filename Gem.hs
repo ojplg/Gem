@@ -94,41 +94,32 @@ fix_easy_tile n = n_to_last_column n +> n_to_goal_row n +> n_to_goal_column n
 
 solve_easy_row_front :: Strategy
 solve_easy_row_front r b = foldr (+>) empty_action (map fix_easy_tile ns) $ b
---  where ps = take (dim b-1) $ row_places b r
-    where ns = [r*dim b+1..(r+1)*dim b-1]
+  where ns = [r*dim b+1..(r+1)*dim b-1]
 
-
-row_places b r = [r*dim b+1..(r+1)*dim b]
-
-one_below_correct_row :: Board -> Int -> Bool
-one_below_correct_row b n = row b n == goal_row b n + 1
-
+-- Fix the last tile in the row
 fix_last_in_row :: Strategy
 fix_last_in_row r b | in_place b n = []
                     | otherwise    = (n_to_last_column n +> up_to_below_goal_row n +> final_slide) b
   where n = dim b * (r+1)
 
-solve_row :: Strategy
-solve_row r = solve_easy_row_front r +> to_action [Dn] +> fix_last_in_row r
+up_to_below_goal_row :: Strategy
+up_to_below_goal_row n b = (take (5*(row b n - goal_row b n - 1)) $ cycle shift_up) 
 
 final_slide :: Action
 final_slide = to_action [Lft,Up,Rt,Rt,Dn,Lft,Up,Lft,Dn]
 
+-- Solve an easy row and all the easy rows
+solve_easy_row :: Strategy
+solve_easy_row r = solve_easy_row_front r +> to_action [Dn] +> fix_last_in_row r
 
-up_to_below_goal_row :: Strategy
-up_to_below_goal_row n b = (take (5*(row b n - goal_row b n - 1)) $ cycle shift_up) 
-
-
-solve_top_rows :: Action
-solve_top_rows b = foldr (+>) empty_action (map solve_row rs) b
+solve_easy_rows :: Action
+solve_easy_rows b = foldr (+>) empty_action (map solve_easy_row rs) b
   where rs = [0..dim b-3]
 
-next_to_last_row_tiles :: Board -> [Int]
-next_to_last_row_tiles b = [size b - 2 * dim b + 1 .. size b - dim b]
-
+-- Solve the penultimate row
 solve_front_next_to_last_row :: Action
 solve_front_next_to_last_row b = (prep_next_to_last_row +> foldr (+>) empty_action (map place_in_next_to_last_row ns)) b
-  where ns = take (dim b - 1) $ next_to_last_row_tiles b
+  where ns = [size b - 2 * dim b + 1 .. size b - dim b - 1]
 
 solve_next_to_last_row :: Action
 solve_next_to_last_row = solve_front_next_to_last_row +> fix_last_in_second_to_last_row
@@ -232,7 +223,7 @@ permutation_start n b | c - g < 3 = g + 3
 
 -- Solve the entire puzzle
 solve_puzzle :: Action
-solve_puzzle = solve_top_rows +> solve_next_to_last_row +> solve_last_row
+solve_puzzle = solve_easy_rows +> solve_next_to_last_row +> solve_last_row
 
 g0 = puzzle 0
 g1 = puzzle 1
@@ -260,20 +251,20 @@ h7 = puzzle $ -7
 h8 = puzzle $ -8
 h9 = puzzle $ -9
 
-p0 = do_action g0 $ solve_top_rows +> solve_next_to_last_row
-p1 = do_action g1 $ solve_top_rows +> solve_next_to_last_row
-p2 = do_action g2 $ solve_top_rows +> solve_next_to_last_row
-p3 = do_action g3 $ solve_top_rows +> solve_next_to_last_row
-p4 = do_action g4 $ solve_top_rows +> solve_next_to_last_row
-p5 = do_action g5 $ solve_top_rows +> solve_next_to_last_row
-p6 = do_action g6 $ solve_top_rows +> solve_next_to_last_row
-p7 = do_action g7 $ solve_top_rows +> solve_next_to_last_row
-p8 = do_action g8 $ solve_top_rows +> solve_next_to_last_row
-p9 = do_action g9 $ solve_top_rows +> solve_next_to_last_row
-p10 = do_action g10 $ solve_top_rows +> solve_next_to_last_row
-p11 = do_action g11 $ solve_top_rows +> solve_next_to_last_row
+p0 = do_action g0 $ solve_easy_rows +> solve_next_to_last_row
+p1 = do_action g1 $ solve_easy_rows +> solve_next_to_last_row
+p2 = do_action g2 $ solve_easy_rows +> solve_next_to_last_row
+p3 = do_action g3 $ solve_easy_rows +> solve_next_to_last_row
+p4 = do_action g4 $ solve_easy_rows +> solve_next_to_last_row
+p5 = do_action g5 $ solve_easy_rows +> solve_next_to_last_row
+p6 = do_action g6 $ solve_easy_rows +> solve_next_to_last_row
+p7 = do_action g7 $ solve_easy_rows +> solve_next_to_last_row
+p8 = do_action g8 $ solve_easy_rows +> solve_next_to_last_row
+p9 = do_action g9 $ solve_easy_rows +> solve_next_to_last_row
+p10 = do_action g10 $ solve_easy_rows +> solve_next_to_last_row
+p11 = do_action g11 $ solve_easy_rows +> solve_next_to_last_row
 
-q1 = do_action h1 $ solve_top_rows +> solve_next_to_last_row
-q2 = do_action h2 $ solve_top_rows +> solve_next_to_last_row
-q3 = do_action h3 $ solve_top_rows +> solve_next_to_last_row
-q4 = do_action h4 $ solve_top_rows +> solve_next_to_last_row
+q1 = do_action h1 $ solve_easy_rows +> solve_next_to_last_row
+q2 = do_action h2 $ solve_easy_rows +> solve_next_to_last_row
+q3 = do_action h3 $ solve_easy_rows +> solve_next_to_last_row
+q4 = do_action h4 $ solve_easy_rows +> solve_next_to_last_row
