@@ -52,6 +52,12 @@ right_shift b n d = Lft : (take (5*count) $ cycle shift)
   where count = dim b - (col b n) - 2
         shift = [d,Rt,Rt,opposite d,Lft]
 
+opposite :: Move -> Move
+opposite Up = Dn
+opposite Dn = Up
+opposite Lft = Rt
+opposite Rt = Lft
+
 n_to_place :: Strategy
 n_to_place n = n_to_last_column n +> up_to_goal_row n +> slide_left n
 
@@ -63,6 +69,11 @@ slide_left n b = Rt : (take (5*count) $ cycle slide)
 solve_row_front :: Strategy
 solve_row_front r b = foldr (+>) empty_action (map (\n -> n_to_place n) ps) b
   where ps = take (dim b-1) $ row_places b r
+
+row_places b r = [r*dim b+1..(r+1)*dim b]
+
+one_below_correct_row :: Board -> Int -> Bool
+one_below_correct_row b n = row b n == goal_row b n + 1
 
 fix_last_in_row :: Strategy
 fix_last_in_row r b | in_place b n = []

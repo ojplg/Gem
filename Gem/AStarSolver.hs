@@ -32,7 +32,7 @@ neighbors :: Board -> Set Board
 neighbors b = foldr maybe_insert empty (map (\m -> neighbor b m) [Up,Dn,Lft,Rt])
 
 neighbor :: Board -> Move -> Maybe Board
-neighbor b m | no m b    = Nothing
+neighbor b m | illegal_move m b    = Nothing
              | otherwise = Just $ move b m
 
 maybe_insert :: (Ord a) => Maybe a -> Set a -> Set a
