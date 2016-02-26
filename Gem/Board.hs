@@ -127,9 +127,6 @@ in_correct_row b n = row b n == goal_row b n
 one_below_correct_row :: Board -> Int -> Bool
 one_below_correct_row b n = row b n == goal_row b n + 1
 
-in_last_column :: Board -> Int -> Bool
-in_last_column b n = col b n == dim b - 1
-
 goal_row :: Board -> Int -> Int
 goal_row b n = (n-1) `div` dim b
 
