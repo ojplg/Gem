@@ -130,16 +130,16 @@ cycle_bottom_rows_counterclockwise :: Action
 cycle_bottom_rows_counterclockwise b = cycle_n_bottom_rows_counterclockwise (dim b - 1) b
 
 -- Solve the penultimate row
--- Solve the front items of the last row
-solve_front_next_to_last_row :: Action
-solve_front_next_to_last_row b = (prep_next_to_last_row +> 
-                                   foldr (+>) empty_action (map place_in_next_to_last_row ns)) b
-  where ns = [size b - 2 * dim b + 1 .. size b - dim b - 1]
-
-place_in_next_to_last_row :: Strategy
-place_in_next_to_last_row n b | col b n >= g = cycle_until_placed n b
-                              | otherwise    = place_from_left_and_below n b
+-- Fix the front items of the last row
+fix_in_next_to_last_row :: Strategy
+fix_in_next_to_last_row n b | col b n >= g = cycle_until_placed n b
+                            | otherwise    = place_from_left_and_below n b
   where g = goal_column b n
+
+cycle_until_placed :: Strategy
+cycle_until_placed n b | in_place b n = []
+                       | otherwise    = (cycle_n_bottom_rows_counterclockwise m +> cycle_until_placed n) b
+  where m = dim b - goal_column b n - 1
 
 place_from_left_and_below :: Strategy
 place_from_left_and_below n b = (cycle_until_past_predecessor n +> 
@@ -152,7 +152,18 @@ place_from_left_and_below n b = (cycle_until_past_predecessor n +>
 
 cycle_until_past_predecessor :: Strategy 
 cycle_until_past_predecessor n b | col b n > col b (n-1) = []
-                                 | otherwise             = (cycle_bottom_rows_counterclockwise +> cycle_until_past_predecessor n) b
+                                 | otherwise             = (cycle_bottom_rows_counterclockwise +> 
+                                                             cycle_until_past_predecessor n) b
+
+move_blank_above_target :: Strategy
+move_blank_above_target n b = Up : replicate (dim b - col b n - 1) Lft
+
+blank_to_corner :: Action
+blank_to_corner b = replicate (dim b - blank_col b - 1)  Rt
+
+cycle_until_restored :: Strategy
+cycle_until_restored n b | in_correct_column b n = []
+                         | otherwise             = (cycle_bottom_rows_clockwise +> cycle_until_restored n) b
 
 correct_interloper :: Strategy
 correct_interloper n b | in_place b (n-1) = []
@@ -160,45 +171,35 @@ correct_interloper n b | in_place b (n-1) = []
   where m = dim b - 1
         p = goal_column b n
 
-cycle_until_placed :: Strategy
-cycle_until_placed n b | in_place b n = []
-                       | otherwise    = (cycle_n_bottom_rows_counterclockwise g +> cycle_until_placed n) b
-  where g = dim b - goal_column b n - 1
-
-solve_next_to_last_row :: Action
-solve_next_to_last_row = solve_front_next_to_last_row +> fix_last_in_second_to_last_row
-
-fix_last_in_second_to_last_row :: Action
-fix_last_in_second_to_last_row b | in_place b n = []
-                                 | otherwise    = (cycle_until_past_predecessor n +> 
-                                                    move_blank_above_target n +>
-                                                    to_action [Dn] +>
-                                                    blank_to_corner +>
-                                                    cycle_until_restored n +>
-                                                    correct_last_column_interloper) b
-  where n = length b - dim b
+solve_front_next_to_last_row :: Action
+solve_front_next_to_last_row b = (prep_next_to_last_row +> 
+                                   foldr (+>) empty_action (map fix_in_next_to_last_row ns)) b
+  where ns = [size b - 2 * dim b + 1 .. size b - dim b - 1]
 
 prep_next_to_last_row :: Action
 prep_next_to_last_row b = replicate (dim b - blank_col b - 1) Rt ++ [Dn]
 
+-- Fix the last item in the next to last row
+fix_last_in_next_to_last_row :: Action
+fix_last_in_next_to_last_row b | in_place b n = []
+                               | otherwise    = (cycle_until_past_predecessor n +> 
+                                                  move_blank_above_target n +>
+                                                  to_action [Dn] +>
+                                                  blank_to_corner +>
+                                                  cycle_until_restored n +>
+                                                  correct_last_column_interloper) b
+  where n = length b - dim b
+
 correct_last_column_interloper :: Action
 correct_last_column_interloper b | in_place b (n-1) = []
-                                 | otherwise        = Lft:Up:replicate (m-1) Lft ++ [Dn] 
-                                                        ++ replicate m Rt
+                                 | otherwise        = Lft:Up:replicate (m-1) Lft ++ [Dn] ++ replicate m Rt
   where n = length b - dim b
         m = dim b - 1
 
-move_blank_above_target :: Strategy
-move_blank_above_target n b = Up : replicate m Lft
-  where m = dim b - col b n - 1
+-- Solve the next to last row entirely
+solve_next_to_last_row :: Action
+solve_next_to_last_row = solve_front_next_to_last_row +> fix_last_in_next_to_last_row
 
-cycle_until_restored :: Strategy
-cycle_until_restored n b | in_correct_column b n = []
-                         | otherwise             = (cycle_bottom_rows_clockwise +> cycle_until_restored n) b
-
-blank_to_corner :: Action
-blank_to_corner b = replicate m Rt
-  where m = dim b - blank_col b - 1
 
 -- Work on the final row
 solve_last_row :: Action
