@@ -75,8 +75,7 @@ function slidingCellStyle(cell, row, column, oldRow, oldColumn, percent){
 	var rowAdjust = computeAdjustment(row, oldRow, 100-percent);
   	var newLeft = column * cellsize + colAdjust * cellsize /100;
   	var newTop = cellVerticalOffset + row * cellsize + rowAdjust * cellsize/100;
-  	console.log("   At percent " + percent + " newLeft is " + newLeft + " new top is " + newTop);
-	cell.style.left = newLeft + "px"
+  	cell.style.left = newLeft + "px"
 	cell.style.top = newTop +  "px"
 }
 
@@ -137,7 +136,6 @@ function doMoves(){
 	      		percent += 5;    
 	    	} 
 			if(percent <= 100 && moveCount < totalmoves){
-	      		console.log("ANIMATING: " + moveCount + ", " + percent + " at " + new Date().getTime());
 	      		window.setTimeout(
 		  			function() { window.requestAnimationFrame(step); },
 		  			25
