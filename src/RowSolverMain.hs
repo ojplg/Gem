@@ -1,3 +1,7 @@
+{--
+A program that solves many puzzles using the RowSolver of different sizes and
+outputs their solutions to STDOUT.
+--}
 module Main ( main ) where
 
 import Gem.Board

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PROGRAMS=(TestMain AStarMain RowSolverMain)
+PROGRAMS=(TestMain AStarMain RowSolverMain DemoMain)
 
 function build_program {
 	ghc --make $1.hs

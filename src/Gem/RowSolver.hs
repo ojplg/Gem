@@ -1,3 +1,8 @@
+{--
+This contains a solver for the puzzle that works in a very straight-forward way.
+It solves each row from top to bottom in succession, working on each row from 
+left to right.
+--}
 module Gem.RowSolver where
 
 import Gem.Board
@@ -227,47 +232,3 @@ permutation_start n b | c - g < 3 = g + 3
 -- Solve the entire puzzle
 solve_puzzle :: Action
 solve_puzzle = solve_easy_rows +> solve_next_to_last_row +> solve_last_row
-
-g0 = puzzle 0
-g1 = puzzle 1
-g2 = puzzle 2
-g3 = puzzle 3
-g4 = puzzle 4
-g5 = puzzle 5
-g6 = puzzle 6
-g7 = puzzle 7
-g8 = puzzle 8
-g9 = puzzle 9
-g10 = puzzle 10
-g11 = puzzle 11
-g12 = puzzle 12
-g19 = puzzle 19
-g20 = puzzle 20
-g24 = puzzle 24
-h1 = puzzle $ -1
-h2 = puzzle $ -2
-h3 = puzzle $ -3
-h4 = puzzle $ -4
-h5 = puzzle $ -5
-h6 = puzzle $ -6
-h7 = puzzle $ -7
-h8 = puzzle $ -8
-h9 = puzzle $ -9
-
-p0 = do_action g0 $ solve_easy_rows +> solve_next_to_last_row
-p1 = do_action g1 $ solve_easy_rows +> solve_next_to_last_row
-p2 = do_action g2 $ solve_easy_rows +> solve_next_to_last_row
-p3 = do_action g3 $ solve_easy_rows +> solve_next_to_last_row
-p4 = do_action g4 $ solve_easy_rows +> solve_next_to_last_row
-p5 = do_action g5 $ solve_easy_rows +> solve_next_to_last_row
-p6 = do_action g6 $ solve_easy_rows +> solve_next_to_last_row
-p7 = do_action g7 $ solve_easy_rows +> solve_next_to_last_row
-p8 = do_action g8 $ solve_easy_rows +> solve_next_to_last_row
-p9 = do_action g9 $ solve_easy_rows +> solve_next_to_last_row
-p10 = do_action g10 $ solve_easy_rows +> solve_next_to_last_row
-p11 = do_action g11 $ solve_easy_rows +> solve_next_to_last_row
-
-q1 = do_action h1 $ solve_easy_rows +> solve_next_to_last_row
-q2 = do_action h2 $ solve_easy_rows +> solve_next_to_last_row
-q3 = do_action h3 $ solve_easy_rows +> solve_next_to_last_row
-q4 = do_action h4 $ solve_easy_rows +> solve_next_to_last_row

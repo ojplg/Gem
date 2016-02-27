@@ -6,7 +6,7 @@ function remove_haskell_object_files() {
 }
 
 SRC=src
-APPS=(TestMain AStarMain RowSolverMain)
+APPS=(TestMain AStarMain RowSolverMain DemoMain)
 
 for i in ${APPS[@]}; do
   rm -f $i

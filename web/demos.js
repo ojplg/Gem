@@ -1,4 +1,42 @@
-var demos = [{
+var demos = [
+{
+desc : "Move the blank to the right of the 1.",
+speed : "Slow",
+start : "4,13,6,15,9,8,3,5,14,1,10,11,16,7,12,2",
+moves : "Rt,Rt,Up"
+}
+,
+{
+desc : "Move the 1 tile to the last column.",
+speed : "Slow",
+start : "4,13,6,15,9,8,3,5,14,1,16,11,7,12,10,2",
+moves : "Lft,Dn,Rt,Rt,Up,Lft"
+}
+,
+{
+desc : "Move the 1 to its goal row.",
+speed : "Slow",
+start : "4,13,6,15,9,8,3,5,14,12,16,1,7,10,2,11",
+moves : "Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up"
+}
+,
+{
+desc : "Move the 1 to its goal column.",
+speed : "Slow",
+start : "4,13,16,1,9,8,15,6,14,12,5,3,7,10,2,11",
+moves : "Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt"
+}
+,
+{
+desc : "Fix the 2 and the three tiles.",
+speed : "Fast",
+start : "1,16,8,6,4,9,13,15,14,12,5,3,7,10,2,11",
+moves : "Rt,Rt,Dn,Dn,Dn,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Rt,Dn,Dn,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt"
+}
+,
+
+
+{
 	desc  : "A dimension 5 puzzle that is solved once the next to last row is done.",
 	speed : "Fast",
 	start : "16,1,18,5,2,25,22,4,11,23,24,15,20,14,10,13,6,7,12,8,21,19,9,17,3",
