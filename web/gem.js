@@ -87,17 +87,13 @@ function doMoves(){
 	console.log("Doing move list " + moveListString);
 	console.log("At fast speed? " + fastSpeed);
 	var moveList = moveListString.split(",");
-	var numberMoves = moveList.length;
-	var remainingMoveList = moveList;
 
     var totalmoves = moveList.length;
   	var moveCount = 0;
 
-  	var start = null;
   	var percent = 0; 
 
 	function step(timestamp){
-		if( ! start ) { start = timestamp; }
 		console.log("Doing move " + moveCount + " of " + totalmoves + " at percent " + percent);
     
     	var stillMoves = true;
