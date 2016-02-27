@@ -1,8 +1,10 @@
+var cellsize = 55;
+var cellVerticalOffset = 300;
+
 var theBoard;
 
 function newBoard(){
 	deleteBoard();
-	
 	var startPosition = document.getElementById("startPosition").value;
 	console.log("New board " + startPosition);
 	var nums = startPosition.split(",");
@@ -46,20 +48,20 @@ function deleteBoard(){
 }
 
 function constantStyle(cell){
-  cell.style.height = "50px";
-  cell.style.width = "50px";
-  cell.style.cssFloat = "left";
-  cell.style.textAlign = "center";
-  cell.style.borderRadius = "3px";
-  cell.style.margin = "5px";
-  cell.style.fontSize = "250%";
-  cell.style.fontFamily = "sans-serif";
-  cell.style.position = "absolute";
+  	cell.style.height = "50px";
+  	cell.style.width = "50px";
+  	cell.style.cssFloat = "left";
+  	cell.style.textAlign = "center";
+  	cell.style.borderRadius = "3px";
+  	cell.style.margin = "5px";
+  	cell.style.fontSize = "250%";
+  	cell.style.fontFamily = "sans-serif";
+  	cell.style.position = "absolute";	
+  	cell.style.background = "green";
 }
 
 function styleCell(cell, row, column, oldRow, oldColumn, percent){
   	constantStyle(cell);
-  	cell.style.background = "green";
 	var colAdjust = computeAdjustment(column, oldColumn, 100-percent);
 	var rowAdjust = computeAdjustment(row, oldRow, 100-percent);
   	var newLeft = column * cellsize + colAdjust * cellsize /100;
@@ -77,11 +79,6 @@ function computeAdjustment(index, oldIndex, percent){
 	}
 	return adjust;
 }
-
-var cellsize = 55;
-var cellVerticalOffset = 300;
-
-var remainingMoveList;
 
 function doMoves(){
 	var moveListString = document.getElementById("moves").value.replace(/\s/g, '');
@@ -104,7 +101,6 @@ function doMoves(){
 		console.log("Doing move " + moveCount + " of " + totalmoves + " at percent " + percent);
     
     	var stillMoves = true;
-
 
     	if( percent == 0 ){
       		var move = moveList[moveCount];
