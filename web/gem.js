@@ -96,27 +96,23 @@ function doMoves(){
 	function step(timestamp){
 		console.log("Doing move " + moveCount + " of " + totalmoves + " at percent " + percent);
     
-    	var stillMoves = true;
-
-    	if( percent == 0 ){
+    	if( percent == 0 && moveCount < totalmoves ){
       		var move = moveList[moveCount];
       		if (move != null){
         		doMove(move);
-  	  		} else {
-  	  			stillMoves = false;
-  	  		}
+  	  		} 
       		console.log("Grabbed move " + move);
 	    	if ( fastSpeed ){
     			percent = 100;
     		}
     	}
-    	if( stillMoves ){
+    	if( moveCount < totalmoves ){
 	    	if( percent < 100 ){
 		    	deleteBoard();
 	     	 	drawBoard(theBoard,percent);
 	      		percent += 5;    
 	    	} 
-			if(percent <= 100 && moveCount < totalmoves){
+			if(percent <= 100){
 	      		window.setTimeout(
 		  			function() { window.requestAnimationFrame(step); },
 		  			25

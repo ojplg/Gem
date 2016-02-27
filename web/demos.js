@@ -6,7 +6,7 @@ var demos = [{
 {
 	desc: "Small move slide",
 	start: "9,3,2,5,7,4,8,6,1",
-	moves: "Dn"
+	moves: "Dn,Up,Rt"
 },
 {
 	desc : "4x4 puzzle solved once the next to last row is done.",
