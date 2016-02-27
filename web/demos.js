@@ -34,7 +34,20 @@ start : "1,16,8,6,4,9,13,15,14,12,5,3,7,10,2,11",
 moves : "Rt,Rt,Dn,Dn,Dn,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Rt,Dn,Dn,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt"
 }
 ,
-
+{
+desc : "Fix the 4 tile.",
+speed : "Slow",
+start : "1,2,3,6,14,13,16,4,12,8,9,15,7,10,11,5",
+moves : "Lft,Up,Rt,Rt,Dn,Lft,Up,Lft,Dn"
+}
+,
+{
+desc : "Solve the second row.",
+speed : "Fast",
+start : "1,2,3,4,14,16,6,13,12,8,9,15,7,10,11,5",
+moves : "Rt,Dn,Dn,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Dn,Lft,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Lft,Dn,Rt,Rt,Up,Lft,Dn,Rt,Rt,Up,Lft,Lft,Up,Rt,Rt,Dn,Lft,Up,Lft,Dn"
+}
+,
 
 {
 	desc  : "A dimension 5 puzzle that is solved once the next to last row is done.",

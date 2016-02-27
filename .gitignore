@@ -8,5 +8,6 @@ cabal-dev
 TestMain
 AStarMain
 RowSolverMain
+DemoMain
 *.swp
 .DS_store

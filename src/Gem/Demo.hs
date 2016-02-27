@@ -35,3 +35,13 @@ d4 = Demo "Move the 1 to its goal column." "Slow" p4 m4
 p5 = moves p4 m4
 m5 = (fix_easy_tile 2 +> fix_easy_tile 3) p5
 d5 = Demo "Fix the 2 and the three tiles." "Fast" p5 m5
+
+p5' = moves p5 m5
+p6 = do_action p5' (n_to_last_column 4)
+m6 = final_slide p6
+d6 = Demo "Fix the 4 tile." "Slow" p6 m6
+
+p7 = moves p6 m6
+m7 = solve_easy_row 1 p7
+d7 = Demo "Solve the second row." "Fast" p7 m7
+
