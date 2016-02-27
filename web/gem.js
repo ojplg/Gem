@@ -27,12 +27,12 @@ function drawBoard(aBoard,percent){
 		var cell = document.createElement("div");
 		if( nums[idx] == movingNumber ) {
 			cell.innerText = nums[idx];
-      		slidingCellStyle(cell, row, col, fromCoordinates.row, fromCoordinates.column, percent);
+      		styleCell(cell, row, col, fromCoordinates.row, fromCoordinates.column, percent);
       		cell.id = "cell_" + nums[idx];
     	} else if ( nums[idx] < nums.length ){
 			cell.innerText = nums[idx];
-			styleCell(cell, row, col, false);
-			cell.id = "cell_" + nums[idx];
+			styleCell(cell, row, col, row, col, 100);
+      		cell.id = "cell_" + nums[idx];
 		} 
 		boardDiv.appendChild(cell);
 	}	
@@ -43,17 +43,6 @@ function deleteBoard(){
 	if (boardDiv != null){
 		document.body.removeChild(boardDiv);
 	}
-}
-
-function styleCell(cell, row, column, isBlank){
-  constantStyle(cell);
-  if( isBlank ){
-    cell.style.background = "blue";
-  } else {
-    cell.style.background = "green";
-  }
-  cell.style.left = (column * cellsize) + "px";
-  cell.style.top = (cellVerticalOffset + row * cellsize) + "px";
 }
 
 function constantStyle(cell){
@@ -68,10 +57,10 @@ function constantStyle(cell){
   cell.style.position = "absolute";
 }
 
-function slidingCellStyle(cell, row, column, oldRow, oldColumn, percent){
+function styleCell(cell, row, column, oldRow, oldColumn, percent){
   	constantStyle(cell);
   	cell.style.background = "green";
-	var colAdjust = computeAdjustment(column, oldColumn, 100 - percent);
+	var colAdjust = computeAdjustment(column, oldColumn, 100-percent);
 	var rowAdjust = computeAdjustment(row, oldRow, 100-percent);
   	var newLeft = column * cellsize + colAdjust * cellsize /100;
   	var newTop = cellVerticalOffset + row * cellsize + rowAdjust * cellsize/100;
