@@ -1,7 +1,7 @@
 module Main ( main ) where
 
-import Gem
 import Gem.Board
+import Gem.RowSolver
 import Data.List (intersperse)
 
 main :: IO ()

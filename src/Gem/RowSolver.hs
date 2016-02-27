@@ -1,9 +1,9 @@
-module Gem where
+module Gem.RowSolver where
 
+import Gem.Board
 import Data.List
 import Data.Maybe
 import System.Random
-import Gem.Board
 
 type Action = Board -> [Move]
 type Strategy =  Int -> Action

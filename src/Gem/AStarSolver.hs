@@ -1,7 +1,6 @@
 module Gem.AStarSolver where
 
 import Gem.Board 
-import Gem
 import Data.Set as Set (Set, empty, insert)
 import Data.Graph.AStar
 import Data.Maybe (fromJust)

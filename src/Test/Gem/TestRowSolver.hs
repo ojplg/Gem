@@ -1,7 +1,7 @@
-module TestGem where
+module Test.Gem.TestRowSolver where
 
-import Gem
 import Gem.Board
+import Gem.RowSolver
 import Test.QuickCheck
 
 prop_adds_right n = (sum p) == sum [1..(size p)]

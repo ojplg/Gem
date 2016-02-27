@@ -1,6 +1,5 @@
 module Main ( main ) where
 
-import Gem
 import Gem.Board
 import Gem.AStarSolver
 
