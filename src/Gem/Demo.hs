@@ -45,3 +45,4 @@ p7 = moves p6 m6
 m7 = solve_easy_row 1 p7
 d7 = Demo "Solve the second row." "Fast" p7 m7
 
+p7' = moves p7 m7

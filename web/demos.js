@@ -40,6 +40,7 @@ speed : "Slow",
 start : "1,2,3,6,14,13,16,4,12,8,9,15,7,10,11,5",
 moves : "Lft,Up,Rt,Rt,Dn,Lft,Up,Lft,Dn"
 }
+
 ,
 {
 desc : "Solve the second row.",
