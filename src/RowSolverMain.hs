@@ -14,7 +14,7 @@ main = do
 
 do_many_puzzles :: Int -> [String]
 do_many_puzzles n = map (format_puzzle_solution . do_puzzle) ns
-  where ns = [8*b+a | a <- [0..7] , b <- [0..n-1]]
+  where ns = [(max_puzzle_size-2)*b+a | a <- [0..(max_puzzle_size-3)] , b <- [0..n-1]]
 
 do_puzzle :: Int -> (Board,[Move])
 do_puzzle n = (p,ms)

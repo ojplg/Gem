@@ -14,20 +14,20 @@ type Action = Board -> [Move]
 type Strategy =  Int -> Action
 
 -- Ways to apply and manipulate actions
-do_action :: Board -> Action -> Board
-do_action b a = moves b (a b)
-
-replicate_action :: Int -> Action -> Action
-replicate_action n a = foldr (+>) empty_action $ replicate n a
-
-(+>) :: Action -> Action -> Action
-a1 +> a2 = \b -> let ma1 = a1 b in ma1 ++ a2 (moves b ma1)
-
 to_action :: [Move] -> Action
 to_action ms = \_ -> ms
 
 empty_action :: Action
 empty_action = \_ -> []
+
+do_action :: Board -> Action -> Board
+do_action b a = moves b (a b)
+
+(+>) :: Action -> Action -> Action
+a1 +> a2 = \b -> let ma1 = a1 b in ma1 ++ a2 (moves b ma1)
+
+replicate_action :: Int -> Action -> Action
+replicate_action n a = foldr (+>) empty_action $ replicate n a
 
 -- Strategies to put the blank in position relative to any number
 blank_to_right :: Strategy
@@ -83,7 +83,8 @@ opposite Rt = Lft
 
 -- Slide the target tile up to its goal row
 n_to_goal_row :: Strategy
-n_to_goal_row n b = (take (5*(row b n - goal_row b n)) $ cycle shift_up) 
+n_to_goal_row n b = take m $ cycle shift_up
+  where m = 5*(row b n - goal_row b n)
 
 shift_up :: [Move]
 shift_up = [Up,Rt,Dn,Lft,Up]

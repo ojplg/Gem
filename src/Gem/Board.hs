@@ -92,6 +92,8 @@ moves :: Board -> [Move] -> Board
 moves = foldl move
 
 -- Generate some puzzles
+max_puzzle_size = 6
+
 random_moves :: Int -> Int -> [Move]
 random_moves length seed = map to_move $ random_int_list length $ mkStdGen seed
    
@@ -105,8 +107,8 @@ random_int_list :: Int -> StdGen -> [Int]
 random_int_list n = take n . unfoldr (Just . random)
 
 puzzle :: Int -> Board
-puzzle seed = puzzle' seed (seed `mod` 4 + 3)
-  where puzzle' seed d = sloppy_moves [1..d^2] $ random_moves (50*d^2) seed
+puzzle seed = puzzle' seed (seed `mod` (max_puzzle_size - 2) + 3)
+  where puzzle' seed d = sloppy_moves [1..d^2] $ random_moves (200*d^2) seed
 
 -- Fuctions for display
 format_tile :: Board -> Int -> String
