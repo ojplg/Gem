@@ -144,7 +144,7 @@ fix_in_next_to_last_row n b | col b n >= g = cycle_until_placed n b
 
 cycle_until_placed :: Strategy
 cycle_until_placed n b | in_place b n = []
-                       | otherwise    = (cycle_n_bottom_rows_counterclockwise m +> cycle_until_placed n) b
+                       | otherwise    = (cycle_n_bottom_rows_clockwise m +> cycle_until_placed n) b
   where m = dim b - goal_column b n - 1
 
 place_from_left_and_below :: Strategy
