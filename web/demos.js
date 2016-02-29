@@ -2,53 +2,110 @@ var demos = [
 {
 desc : "Move the blank to the right of the 1.",
 speed : "Slow",
-start : "4,13,6,15,9,8,3,5,14,1,10,11,16,7,12,2",
-moves : "Rt,Rt,Up"
+start : "14,4,10,6,13,1,5,2,9,3,11,12,7,16,8,15",
+moves : "Rt,Up,Up"
 }
 ,
 {
 desc : "Move the 1 tile to the last column.",
 speed : "Slow",
-start : "4,13,6,15,9,8,3,5,14,1,16,11,7,12,10,2",
+start : "14,4,10,6,13,1,16,2,9,3,5,12,7,8,11,15",
 moves : "Lft,Dn,Rt,Rt,Up,Lft"
 }
 ,
 {
 desc : "Move the 1 to its goal row.",
 speed : "Slow",
-start : "4,13,6,15,9,8,3,5,14,12,16,1,7,10,2,11",
-moves : "Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up"
+start : "14,4,10,6,13,3,16,1,9,5,12,2,7,8,11,15",
+moves : "Up,Rt,Dn,Lft,Up"
 }
 ,
 {
 desc : "Move the 1 to its goal column.",
 speed : "Slow",
-start : "4,13,16,1,9,8,15,6,14,12,5,3,7,10,2,11",
+start : "14,4,16,1,13,3,6,10,9,5,12,2,7,8,11,15",
 moves : "Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt"
 }
 ,
 {
 desc : "Fix the 2 and the three tiles.",
 speed : "Fast",
-start : "1,16,8,6,4,9,13,15,14,12,5,3,7,10,2,11",
-moves : "Rt,Rt,Dn,Dn,Dn,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Rt,Dn,Dn,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt"
+start : "1,16,3,10,14,13,4,6,9,5,12,2,7,8,11,15",
+moves : "Rt,Dn,Dn,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Dn,Rt,Rt,Up,Lft,Up,Rt,Dn,Lft,Up,Rt"
 }
 ,
 {
 desc : "Fix the 4 tile.",
 speed : "Slow",
-start : "1,2,3,6,14,13,16,4,12,8,9,15,7,10,11,5",
+start : "1,2,3,13,14,5,16,4,9,6,12,10,7,8,11,15",
 moves : "Lft,Up,Rt,Rt,Dn,Lft,Up,Lft,Dn"
 }
-
 ,
 {
 desc : "Solve the second row.",
 speed : "Fast",
-start : "1,2,3,4,14,16,6,13,12,8,9,15,7,10,11,5",
-moves : "Rt,Dn,Dn,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Dn,Lft,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Lft,Dn,Rt,Rt,Up,Lft,Dn,Rt,Rt,Up,Lft,Lft,Up,Rt,Rt,Dn,Lft,Up,Lft,Dn"
+start : "1,2,3,4,14,16,13,5,9,6,12,10,7,8,11,15",
+moves : "Dn,Rt,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Rt,Rt,Dn,Lft,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Up,Rt,Dn,Dn,Lft,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Rt,Dn,Lft,Up,Rt,Dn,Lft,Up,Up,Rt,Dn,Lft,Up,Rt,Dn,Lft,Lft,Dn,Rt,Rt,Up,Lft,Lft,Up,Rt,Rt,Dn,Lft,Up,Lft,Dn"
 }
 ,
+{
+desc : "Fix the 9 tile via cycling",
+speed : "Slow",
+start : "1,2,3,4,5,6,7,8,12,9,11,10,14,15,13,16",
+moves : "Up,Lft,Lft,Lft,Dn,Rt,Rt,Rt,Up,Lft,Lft,Lft,Dn,Rt,Rt,Rt,Up,Lft,Lft,Lft,Dn,Rt,Rt,Rt,Up,Lft,Lft,Lft,Dn,Rt,Rt,Rt,Up,Lft,Lft,Lft,Dn,Rt,Rt,Rt,Up,Lft,Lft,Lft,Dn,Rt,Rt,Rt"
+}
+,
+{
+desc : "Cycle until past predecessor",
+speed : "Slow",
+start : "1,2,3,4,5,6,7,8,9,10,13,15,12,11,14,16",
+moves : "Lft,Lft,Lft,Up,Rt,Rt,Rt,Dn"
+}
+,
+{
+desc : "Move blank above target",
+speed : "Slow",
+start : "1,2,3,4,5,6,7,8,10,13,15,14,9,12,11,16",
+moves : "Up,Lft"
+}
+,
+{
+desc : "Move blank down and to the corner",
+speed : "Slow",
+start : "1,2,3,4,5,6,7,8,10,13,16,15,9,12,11,14",
+moves : "Dn,Rt"
+}
+,
+{
+desc : "Cycle until restored",
+speed : "Slow",
+start : "1,2,3,4,5,6,7,8,10,13,11,15,9,12,14,16",
+moves : ""
+}
+,
+{
+desc : "Correct interloper",
+speed : "Slow",
+start : "1,2,3,4,5,6,7,8,10,13,11,15,9,12,14,16",
+moves : "Up,Lft,Lft,Lft,Dn,Rt,Rt,Up,Rt,Dn"
+}
+,
+{
+desc : "Permute the bottom row",
+speed : "Slow",
+start : "1,2,3,4,5,6,7,8,9,10,11,12,14,15,13,16",
+moves : "Up,Lft,Lft,Lft,Dn,Rt,Rt,Rt,Up,Lft,Lft,Lft,Dn,Rt,Rt,Rt,Lft,Lft,Up,Rt,Rt,Dn,Lft,Lft,Lft,Up,Rt,Rt,Rt,Dn"
+}
+,
+{
+desc : "Permute the bottom row again",
+speed : "Slow",
+start : "1,2,3,4,5,6,7,8,9,10,11,12,15,13,14,16",
+moves : "Up,Lft,Lft,Lft,Dn,Rt,Rt,Rt,Up,Lft,Lft,Lft,Dn,Rt,Rt,Rt,Lft,Lft,Up,Rt,Rt,Dn,Lft,Lft,Lft,Up,Rt,Rt,Rt,Dn"
+}
+,
+
+
 
 {
 	desc  : "A dimension 5 puzzle that is solved once the next to last row is done.",
