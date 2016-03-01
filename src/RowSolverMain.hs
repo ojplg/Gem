@@ -10,7 +10,7 @@ import Data.List (intersperse)
 
 main :: IO ()
 main = do
-  mapM_ putStrLn $ do_many_puzzles 5
+  mapM_ putStrLn $ do_many_puzzles 1000
 
 do_many_puzzles :: Int -> [String]
 do_many_puzzles n = map (format_puzzle_solution . do_puzzle) ns

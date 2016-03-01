@@ -92,7 +92,7 @@ moves :: Board -> [Move] -> Board
 moves = foldl move
 
 -- Generate some puzzles
-max_puzzle_size = 6
+max_puzzle_size = 12
 
 random_moves :: Int -> Int -> [Move]
 random_moves length seed = map to_move $ random_int_list length $ mkStdGen seed
