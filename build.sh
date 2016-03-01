@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 PROGRAMS=(TestMain AStarMain RowSolverMain DemoMain)
 
