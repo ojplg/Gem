@@ -34,8 +34,10 @@ a10 = move_blank_above_target 11
 a11 = to_action [Dn] +> blank_to_corner
 a12 = cycle_until_restored 11
 a13 = fix_last_in_next_to_last_row
-a14 = permute_three_in_bottom_row
-a15 = permute_three_in_bottom_row
+a14 = replicate_action 2 (cycle_n_bottom_rows_clockwise 3)
+a15 = cycle_n_bottom_rows_counterclockwise 2
+a16 = cycle_n_bottom_rows_counterclockwise 3
+
 
 ps = map puzzle [n*4 + 1 | n <- [0..]]
 
@@ -48,7 +50,9 @@ good b = and [col b 1 < 3 && row b 1 > 0,
               and $ map (in_place b7) [1..8],
               (and $ map (in_place b8) [1..9]) && (not $ in_place b8 10),
               (and $ map (in_place b8') [1..10]) && (col b8' 11 < 2),
-              and $ map (in_place b15) [1..15]
+              (and $ map (in_place b12) [1..11]) && (col b12 12 < 3),
+              (and $ map (in_place b13) [1..12]) && (not $ in_place b13 13 ) ,
+              (and $ map (in_place b16) [1..15])
               ]
   where b1 = do_action b a1
         b2 = do_action b1 a2
@@ -68,6 +72,7 @@ good b = and [col b 1 < 3 && row b 1 > 0,
         b13 = do_action b12 a13
         b14 = do_action b13 a14
         b15 = do_action b14 a15
+        b16 = do_action b15 a16
         
 p1 = p
 m1 = a1 p1
@@ -126,8 +131,14 @@ d13 = Demo "Fix last in the next-to-last row" "Slow" p13 m13
 
 p14 = moves p13 m13
 m14 = a14 p14
-d14 = Demo "Permute the bottom row" "Slow" p14 m14
+d14 = Demo "2 x clockwise cycle (width of 4)" "Slow" p14 m14
 
 p15 = moves p14 m14
 m15 = a15 p15
-d15 = Demo "Permute the bottom row" "Slow" p15 m15
+d15 = Demo "Counter clockwise (width of 3)" "Slow" p15 m15
+
+p16 = moves p15 m15
+m16 = a16 p16
+d16 = Demo "Counter clockwise (width of 3)" "Slow" p16 m16
+
+p17 = moves p16 m16 

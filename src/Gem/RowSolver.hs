@@ -99,7 +99,7 @@ fix_easy_tile :: Strategy
 fix_easy_tile n = n_to_last_column n +> n_to_goal_row n +> n_to_goal_column n
 
 solve_easy_row_front :: Strategy
-solve_easy_row_front r b = foldr (+>) empty_action (map fix_easy_tile ns) $ b
+solve_easy_row_front r b = foldr (+>) empty_action (map fix_easy_tile ns) b
   where ns = [r*dim b+1..(r+1)*dim b-1]
 
 -- Fix the last tile in the row
