@@ -106,7 +106,7 @@ to_move i | i `mod` 4==0 = Up
 random_int_list :: Int -> StdGen -> [Int]
 random_int_list n = take n . unfoldr (Just . random)
 
-puzzle seed = sloppy_moves [1..l] $ random_moves (50 * l) seed
+puzzle seed = sloppy_moves [1..l] $ random_moves (51 * l) seed
    where l = (seed `mod` (max_puzzle_size - 2) + 3) ^ 2
 
 -- Fuctions for display

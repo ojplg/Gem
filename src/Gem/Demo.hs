@@ -38,7 +38,7 @@ a13 = fix_last_in_next_to_last_row
 a14 = replicate_action 2 (cycle_n_bottom_rows_clockwise 3)
 a15 = cycle_n_bottom_rows_counterclockwise 2
 a16 = cycle_n_bottom_rows_counterclockwise 3
-
+a17 = permute_three_in_bottom_row
 
 ps = filter (\a -> dim a == 4) $ map puzzle [0..]
 
@@ -48,12 +48,12 @@ good b = and [col b 1 < 3 && row b 1 > 0,
               and $ map (in_place b5) [1,2,3],
               col b5 4 < 3 && row b5 4 > 1,
               and $ map (in_place b6) [1..4],
-              and $ map (in_place b7) [1..8],
+              (and $ map (in_place b7) [1..8]) && (not $ in_place b7 9),
               (and $ map (in_place b8) [1..9]) && (not $ in_place b8 10),
               (and $ map (in_place b8') [1..10]) && (col b8' 11 < 2),
               (and $ map (in_place b12) [1..11]) && (col b12 12 < 3),
-              (and $ map (in_place b13) [1..12]) && (not $ in_place b13 13 ) ,
-              (and $ map (in_place b16) [1..15])
+              (and $ map (in_place b13) [1..12]) && (not $ in_place b13 13 ),
+              (and $ map (in_place b17) [1..15])
               ]
   where b1 = do_action b a1
         b2 = do_action b1 a2
@@ -74,6 +74,7 @@ good b = and [col b 1 < 3 && row b 1 > 0,
         b14 = do_action b13 a14
         b15 = do_action b14 a15
         b16 = do_action b15 a16
+        b17 = do_action b16 a17
         
 p1 = p
 m1 = a1 p1
@@ -140,9 +141,11 @@ d15 = Demo "Counter clockwise (width of 3)" "Slow" p15 m15
 
 p16 = moves p15 m15
 m16 = a16 p16
-d16 = Demo "Counter clockwise (width of 3)" "Slow" p16 m16
+d16 = Demo "Counter clockwise (width of 4)" "Slow" p16 m16
 
 p17 = moves p16 m16 
+m17 = a17 p17
+d17 = Demo "Do the full permute" "Slow" p17 m17
 
 q = [9,6,4,3,8,5,7,1,2]
 q_solution = solve_puzzle q
