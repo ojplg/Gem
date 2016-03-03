@@ -2,10 +2,11 @@ module Gem.Demo where
 
 import Gem.Board
 import Gem.RowSolver
+import Gem.AStarSolver
 import Data.List (intersperse, find)
 import Data.Maybe (fromJust)
 
-data Demo = Demo { desc :: String, speed :: String, start :: Board, mvs :: [Move] }
+data Demo = Demo { desc :: String, speed :: String, start :: Board, mvs :: [Move] } deriving Show
 
 to_strings :: Demo -> [String]
 to_strings d = [
@@ -39,7 +40,7 @@ a15 = cycle_n_bottom_rows_counterclockwise 2
 a16 = cycle_n_bottom_rows_counterclockwise 3
 
 
-ps = map puzzle [n*4 + 1 | n <- [0..]]
+ps = filter (\a -> dim a == 4) $ map puzzle [0..]
 
 p = fromJust $ find good ps
 
@@ -142,3 +143,13 @@ m16 = a16 p16
 d16 = Demo "Counter clockwise (width of 3)" "Slow" p16 m16
 
 p17 = moves p16 m16 
+
+q = [9,6,4,3,8,5,7,1,2]
+q_solution = solve_puzzle q
+q_solution_astar = solve_puzzle_astar q
+q1 = Demo "By row solution to 3x3 puzzle (60 moves)" "Slow" q q_solution
+q2 = Demo "A* solution to 3x3 puzzle (24 moves)" "Slow" q q_solution_astar
+
+r = [65,40,56,5,13,17,41,64,44,72,58,37,61,9,26,69,46,6,23,14,28,25,43,15,53,16,34,3,73,60,47,35,11,12,80,49,71,62,76,38,74,51,36,70,30,50,57,33,31,2,18,10,22,77,75,20,59,39,55,45,1,48,52,79,24,67,68,29,63,42,81,66,7,27,54,32,78,21,4,8,19]
+r_solution = solve_puzzle r
+r1 = Demo "Solution to a 9x9 puzzle" "Fast" r r_solution
