@@ -1,10 +1,5 @@
 #!/bin/bash
 
-function remove_haskell_object_files() {
-  rm -f *.o
-  rm -f *.hi
-}
-
 SRC=src
 APPS=(TestMain AStarMain RowSolverMain DemoMain)
 
