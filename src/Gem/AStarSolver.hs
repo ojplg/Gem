@@ -1,7 +1,7 @@
 module Gem.AStarSolver where
 
 import Gem.Board 
-import Data.Set as Set (Set, empty, insert)
+import Data.HashSet (HashSet, empty, insert)
 import Data.Graph.AStar
 import Data.Maybe (fromJust)
 
@@ -14,7 +14,7 @@ solved b = metric b == 0
 node_distance :: Board -> Board -> Int
 node_distance _ _ = 1
 
-neighbors :: Board -> Set Board
+neighbors :: Board -> HashSet Board
 neighbors b = foldr insert empty $ map (move b) ms
   where ms = filter (\m -> not $ illegal_move m b) [Up,Dn,Lft,Rt]
 

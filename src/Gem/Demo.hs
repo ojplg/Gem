@@ -10,14 +10,13 @@ data Demo = Demo { desc :: String, speed :: String, start :: Board, mvs :: [Move
 
 to_strings :: Demo -> [String]
 to_strings d = [
-				  "{",
-				  "desc : \"" ++ desc d ++ "\",",
-				  "speed : \"" ++ speed d ++ "\",",
-				  "start : \"" ++ (concat $ intersperse "," $ map show $ start d) ++ "\",",
-				  "moves : \"" ++ (concat $ intersperse "," $ map show $ mvs d) ++ "\"",
-				  "}"
-				]
-				
+                 "{",
+                 "desc : \"" ++ desc d ++ "\",",
+                 "speed : \"" ++ speed d ++ "\",",
+                 "start : \"" ++ (concat $ intersperse "," $ map show $ start d) ++ "\",",
+                 "moves : \"" ++ (concat $ intersperse "," $ map show $ mvs d) ++ "\"",
+                 "}"
+               ]
 
 a1 = blank_to_right 1
 a2 = n_to_last_column 1
