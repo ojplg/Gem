@@ -6,11 +6,11 @@ import Gem.AStarSolver
 
 main :: IO ()
 main = do
-  mapM_ putStrLn $ do_many_puzzles 1000
+  mapM_ putStrLn $ do_many_puzzles 20
 
 do_many_puzzles :: Int -> [String]
 do_many_puzzles n = map (format_puzzle_solution . do_puzzle) ns
-  where ns = [10*n | n <- [1..n]]
+  where ns = [(max_puzzle_size-2)*n | n <- [1..n]]
 
 do_puzzle :: Int -> (Board,[Move])
 do_puzzle n = (p,ms)
