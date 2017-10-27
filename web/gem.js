@@ -1,5 +1,5 @@
 var cellsize = 55;
-var cellVerticalOffset = 300;
+var cellVerticalOffset = 350;
 
 var theBoard;
 
